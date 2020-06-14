@@ -18,7 +18,7 @@ app.use(cors())
 const adminRoute = require("./api/routes/admin")
 
 // API URL's
-app.use("/api/admin", adminRoute)
+app.use("/dhakaboss/ticketing/api/admin", adminRoute)
 
 
 
