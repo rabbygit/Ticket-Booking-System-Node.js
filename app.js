@@ -2,9 +2,13 @@ const express = require("express")
 const cors = require("cors")
 const morgan = require("morgan")
 const bodyParser = require("body-parser")
+const mongoose = require('mongoose');
 
 // DB Connection here
-
+mongoose.connect('mongodb://localhost:27017/test', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 
 
 const app = express()
