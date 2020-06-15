@@ -3,7 +3,7 @@
 // Success Payments Index
 const successPaymentsIndex = (req, res) => {
     const limit = req.params.limit
-    const payments_data = limit + " " + "Success payments"
+    const payments_data = limit + " " + "Success payments data"
 
     res.status(200).json({
         success_payments_data: payments_data
