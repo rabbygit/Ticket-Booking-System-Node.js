@@ -16,7 +16,8 @@ const seatSchema = new Schema({
     },
     class: {
         type: String,
-        enum: ["Economy", "Business"]
+        required: true,
+        maxlength: 50
     },
     row: {
         type: String,
