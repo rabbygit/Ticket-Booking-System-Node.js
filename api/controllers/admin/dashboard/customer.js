@@ -2,8 +2,9 @@
 
 // Customer Index
 const customerIndex = (req, res) => {
-    const limit = req.params.limit;
-    const customers = "customers index " + limit;
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const customers = "customers index " + limit + ' ' + currentPage;
 
     res.status(200).json({
         customers_data: customers
@@ -33,22 +34,24 @@ const customerDelete = (req, res) => {
 
 // Customer select by limit & gender
 const customerSelectByLimitGender = (req, res) => {
-    const limit = req.params.limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
     const gender = req.params.gender
 
     res.status(200).json({
-        customer_data: limit + " customer fetch by " + gender
+        customer_data: limit + " customer fetch by " + gender + ' page ' + currentPage
     })
 }
 
 
 // Customer filter by phone
-const customerFilterByPhone = (req, res) => {
-    const phone = req.body.phone
+const customerFilter = (req, res) => {
+    const data = req.body.data
     const limit = req.body.limit
+    const currentPage = req.body.currentPage
 
     res.status(200).json({
-        customer_data: phone + " customer fetch by " + limit
+        customer_data: data + " customer fetch by " + limit + ' ' + currentPage
     })
 }
 
@@ -60,5 +63,5 @@ module.exports = {
     customerShow,
     customerDelete,
     customerSelectByLimitGender,
-    customerFilterByPhone
+    customerFilter
 }

@@ -2,8 +2,9 @@
 
 // Merchant Index
 const merchantIndex = (req, res) => {
-    const limit = req.params.limit
-    let merchants = "Merchant list " + limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    let merchants = "Merchant list " + limit + ' '+ currentPage
 
     res.status(200).json({
         merchant_data: merchants
@@ -12,9 +13,11 @@ const merchantIndex = (req, res) => {
 
 
 // Filter Merchant ID
-const filterMerchantById = (req, res) => {
-    const merchant_id = req.body.merchant_id
-    let merchant = "Merchant " + merchant_id
+const filterMerchant = (req, res) => {
+    const data = req.body.data
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    let merchant = "Filtered Merchant " + data + ' '+ limit+ ' '+ currentPage
 
     res.status(200).json({
         merchant: merchant
@@ -24,7 +27,7 @@ const filterMerchantById = (req, res) => {
 
 // Merchant status
 const changeMerchantStatus = (req, res) => {
-    const merchant_id = req.body.merchant_id
+    const merchant_id = req.params.id
     const status = req.body.status
 
     let message
@@ -70,7 +73,7 @@ const deleteMerchant = (req, res) => {
 
 module.exports = {
     merchantIndex,
-    filterMerchantById,
+    filterMerchant,
     changeMerchantStatus,
     showMerchantProfile,
     merchantDashboard,
