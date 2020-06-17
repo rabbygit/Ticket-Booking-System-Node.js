@@ -1,8 +1,9 @@
 
 // Booking Request List
 const bookingRequestIndex = (req, res) => {
-    const limit = req.params.limit
-    const booking_requests = "All booking requests " + limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const booking_requests = "All booking requests " + limit + ' ' + currentPage
 
     res.status(200).json({
         booking_requests_data: booking_requests
@@ -12,10 +13,11 @@ const bookingRequestIndex = (req, res) => {
 
 // Requests Filter
 const bookingRequestFilter = (req, res) => {
-    const limit = req.body.limit
-    const phone = req.body.phone
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const data = req.body.data
 
-    const booking_requests = "All booking requests " + limit
+    const booking_requests = "Filtered booking requests " + limit+ " "+ currentPage
 
     res.status(200).json({
         booking_requests_data: booking_requests

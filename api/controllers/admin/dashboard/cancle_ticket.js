@@ -1,8 +1,9 @@
 
 // Cancel Ticket List
 const cancelTicketIndex = (req, res) => {
-    const limit = req.params.limit
-    const cancel_ticket = "Total cancel ticket" + " " + limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const cancel_ticket = "Total cancel ticket" + " " + limit + " " + currentPage
 
     res.status(200).json({
         cancel_ticket_data: cancel_ticket
@@ -10,11 +11,23 @@ const cancelTicketIndex = (req, res) => {
 }
 
 
-// Cancel Ticket Select by Date
-const cancelTicketSelectByDate = (req, res) => {
+// Cancel Ticket Select by limit
+const limitCancelTicket = (req, res) => {
+    const limit = req.query.limit
+    const cancel_ticket = "Total cancel ticket by " + "Limit" + " " + limit
+
+    res.status(200).json({
+        cancel_ticket_data: cancel_ticket
+    })
+}
+
+
+// Cancel Ticket Filter by Date
+const cancelTicketFilterByDate = (req, res) => {
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
     const date = req.params.date
-    const limit = req.params.limit
-    const cancel_ticket = "Total cancel ticket by date" + " " + date + " " + "Limit" + " " + limit
+    const cancel_ticket = "Total cancel ticket by " + "date" + " " + date + " " + limit + " " + currentPage
 
     res.status(200).json({
         cancel_ticket_data: cancel_ticket
@@ -22,11 +35,12 @@ const cancelTicketSelectByDate = (req, res) => {
 }
 
 
-// Filter by phone
+// Filter 
 const cancelTicketFilter = (req, res) => {
-    const phone = req.body.phone
-    const limit = req.body.limit
-    const cancel_ticket = "Total cancel ticket filter by phone" + " " + phone + " " + "Limit" + " " + limit
+    const data = req.body.data
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const cancel_ticket = "Total cancel ticket filter by " + " " + data + " " + "Limit " + " " + limit + "Current page " + currentPage
 
     res.status(200).json({
         cancel_ticket_data: cancel_ticket
@@ -48,7 +62,8 @@ const cancelTicketShow = (req, res) => {
 
 module.exports = {
     cancelTicketIndex,
-    cancelTicketSelectByDate,
+    limitCancelTicket,
+    cancelTicketFilterByDate,
     cancelTicketFilter,
     cancelTicketShow
 }

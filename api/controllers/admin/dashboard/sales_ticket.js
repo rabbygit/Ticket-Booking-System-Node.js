@@ -1,8 +1,9 @@
 
 // Ticket Sale List
 const salesTicketIndex = (req, res) => {
-    const limit = req.params.limit
-    const sales_ticket = "Total sale ticket" + " " + limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const sales_ticket = "Total sale ticket" + " " + limit + " " + currentPage
 
     res.status(200).json({
         sales_ticket_data: sales_ticket
@@ -10,11 +11,23 @@ const salesTicketIndex = (req, res) => {
 }
 
 
-// Sales Ticket Select by Date
-const salesTicketSelectByDate = (req, res) => {
+// Limit Sales Ticket Select
+const limitSalesTicketSelect = (req, res) => {
+    const limit = req.query.limit
+    const sales_ticket = "Total sales ticket by limit" + " " + limit
+
+    res.status(200).json({
+        sales_ticket_data: sales_ticket
+    })
+}
+
+
+// Filter by date
+const filterbyDateSalesTicket = (req, res) => {
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
     const date = req.params.date
-    const limit = req.params.limit
-    const sales_ticket = "Total sales ticket by date" + " " + date + " " + "Limit" + " " + limit
+    const sales_ticket = "Total sales ticket by date" + " " + limit + " " + currentPage + " " + date
 
     res.status(200).json({
         sales_ticket_data: sales_ticket
@@ -22,11 +35,12 @@ const salesTicketSelectByDate = (req, res) => {
 }
 
 
-// Filter by phone
+// Filter Sales Ticket
 const salesTicketFilter = (req, res) => {
-    const phone = req.body.phone
-    const limit = req.body.limit
-    const sales_ticket = "Total sales ticket filter by phone" + " " + phone + " " + "Limit" + " " + limit
+    const data = req.body.data
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    const sales_ticket = "Total sales ticket filter by " + " " + data + " " + "Limit" + " " + limit+ " " + currentPage
 
     res.status(200).json({
         sales_ticket_data: sales_ticket
@@ -48,7 +62,8 @@ const salesTicketShow = (req, res) => {
 
 module.exports = {
     salesTicketIndex,
-    salesTicketSelectByDate,
+    limitSalesTicketSelect,
+    filterbyDateSalesTicket,
     salesTicketFilter,
     salesTicketShow
 }
