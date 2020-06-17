@@ -4,7 +4,7 @@
 const merchantIndex = (req, res) => {
     const limit = req.query.limit
     const currentPage = req.query.currentPage
-    let merchants = "Merchant list " + limit + ' '+ currentPage
+    let merchants = "Merchant list " + limit + ' ' + currentPage
 
     res.status(200).json({
         merchant_data: merchants
@@ -17,7 +17,7 @@ const filterMerchant = (req, res) => {
     const data = req.body.data
     const limit = req.query.limit
     const currentPage = req.query.currentPage
-    let merchant = "Filtered Merchant " + data + ' '+ limit+ ' '+ currentPage
+    let merchant = "Filtered Merchant " + data + ' ' + limit + ' ' + currentPage
 
     res.status(200).json({
         merchant: merchant
