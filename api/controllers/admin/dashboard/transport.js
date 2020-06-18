@@ -1,29 +1,71 @@
+const mongoose = require('mongoose')
 
+const Bus = require("../../../../models/Bus")
 
 // Transports index 
-const transportIndex = (req, res) => {
-    const limit = req.params.limit;
-    const transports = "transports index " + limit;
+const transportIndex = async (req, res, next) => {
 
-    res.status(200).json({
-        transports_data: transports
-    })
+    let itemPerPage = req.query.limit || 50
+    let currentPage = req.query.currentPage || 1
+    // const limit = req.params.limit;
+    // const transports = "transports index " + limit;
+
+    try {
+        const transports = await Bus.find()
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            itemPerPage,
+            currentPage,
+            transports_data: transports
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Transport show
-const transportShow = (req, res) => {
-    const transport_id = req.params.id
+const transportShow = async (req, res, next) => {
 
-    res.status(200).json({
-        transport_data: transport_id
-    })
+    const transport_id = req.params.id
+    let transport_type = req.query.transport_type || "Bus"
+    let transport = null;
+
+    try {
+        // Check valid mongodb id
+        if (!mongoose.isValidObjectId(transport_id)) {
+            let e = new Error()
+            e.status = 400
+            throw e
+        }
+
+        switch (transport_type) {
+            case "Bus":
+                transport = await Bus.findById(transport_id).exec()
+                break;
+            //Other switch case for different type of transport
+        }
+
+        res.status(200).json({
+            transport_data: transport
+        })
+    } catch (e) {
+        console.log(e.message)
+        next(e)
+    }
 }
 
 
 // Transport edit
 const transportEdit = (req, res) => {
     const transport_id = req.params.id
+    const { transport_type } = req.params
+
+    let {
+
+    } = req.body
 
     res.status(200).json({
         transport_data: transport_id
@@ -42,12 +84,31 @@ const transportUpdate = (req, res) => {
 
 
 // Transport delete
-const transportDelete = (req, res) => {
+const transportDelete = async (req, res, next) => {
     const transport_id = req.params.id
+    const transport_type = req.query.type
 
-    res.status(200).json({
-        transport_data: transport_id + "transport deleted"
-    })
+    try {
+        if (!transport_id || !transport_type) {
+            let e = new Error()
+            e.status = 400
+            throw e
+        }
+
+        // switch (transport_type) {
+        //     case "Bus":
+        //         deletedTransport = await Bus.findOneAndDelete({ _id: transport_id })
+        //         break;
+        // }
+
+        res.status(200).json({
+            transport_data: transport_id + "transport deleted"
+        })
+
+    } catch (error) {
+        console.log(error.message)
+        next(error)
+    }
 }
 
 

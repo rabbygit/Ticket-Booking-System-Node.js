@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 // DB Connection here
 mongoose.connect('mongodb://localhost:27017/test', {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
 });
 
 
@@ -24,7 +25,27 @@ const adminRoute = require("./api/routes/admin")
 // API URL's
 app.use("/dhakaboss/ticketing/api/admin", adminRoute)
 
+app.use((req, res, next) => {
+    let error = new Error('404 page Not Found')
+    error.status = 404
+    next(error)
+})
 
+app.use((error, req, res, next) => {
+    if (error.status == 404) {
+        return res.status(404).json({
+            message: "404 Page Not Found"
+        })
+    }
+    if (error.status == 400) {
+        return res.status(400).json({
+            message: "Bad request"
+        })
+    }
+    return res.status(500).json({
+        message: "Internal Server Error"
+    })
+})
 
 // App Port
 const port = process.env.PORT || 3000

@@ -39,6 +39,10 @@ const busSchema = new Schema({
         enum: ["AC", "NON AC"]
     },
     totalSeat: Number,
+    seatPrice: {
+        type: Number,
+        required: true
+    },
     seats: [
         {
             type: Schema.Types.ObjectId,

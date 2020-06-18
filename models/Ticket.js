@@ -25,6 +25,16 @@ const ticketSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Seat",
         required: true
+    },
+    customerPaymentStatus: {
+        type: String,
+        enum: ["paid", "processing", "canceled", "unpaid"],
+        default: "unpaid"
+    },
+    merchantPaymentStatus: {
+        type: String,
+        enum: ["paid", "processing", "canceled", "unpaid"],
+        default: "unpaid"
     }
 }, {
     timestamps: true
