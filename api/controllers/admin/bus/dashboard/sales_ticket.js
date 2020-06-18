@@ -40,7 +40,7 @@ const salesTicketFilter = (req, res) => {
     const data = req.body.data
     const limit = req.query.limit
     const currentPage = req.query.currentPage
-    const sales_ticket = "Total sales ticket filter by " + " " + data + " " + "Limit" + " " + limit+ " " + currentPage
+    const sales_ticket = "Total sales ticket filter by " + " " + data + " " + "Limit" + " " + limit + " " + currentPage
 
     res.status(200).json({
         sales_ticket_data: sales_ticket

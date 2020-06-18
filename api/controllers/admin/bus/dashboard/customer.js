@@ -1,8 +1,9 @@
 
 // Customer List
 const customerIndex = (req, res) => {
-    const limit = req.params.limit
-    let bus_customers = "Bus customers " + limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
+    let bus_customers = "Bus customers " + limit + " " + currentPage
 
     res.status(200).json({
         bus_customers_data: bus_customers
@@ -10,12 +11,23 @@ const customerIndex = (req, res) => {
 }
 
 
+// Limit Customer Select
+const limitCustomerSelect = (req, res) => {
+    const limit = req.params.limit
+    let bus_customers = "Limit Bus customers " + limit
+
+    res.status(200).json({
+        bus_customers_data: bus_customers
+    })
+}
+
 // Filter using gender
 const filterCustomeByGender = (req, res) => {
     const gender = req.params.gender
-    const limit = req.params.limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
 
-    let bus_customers = "Bus customers by gender" + gender + ' ' + limit
+    let bus_customers = "Bus customers by gender " + gender + ' ' + limit + ' ' + currentPage
 
     res.status(200).json({
         bus_customers_data: bus_customers
@@ -24,11 +36,12 @@ const filterCustomeByGender = (req, res) => {
 
 
 // Filter customer with phone
-const filterCustomerByPhone = (req, res) => {
-    const phone = req.body.phone
-    const limit = req.body.limit
+const filterCustomer = (req, res) => {
+    const data = req.body.data
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
 
-    let bus_customers = "Bus customers by phone" + phone + ' ' + limit
+    let bus_customers = "Bus customers filter by " + data + ' ' + limit + ' ' + currentPage
 
     res.status(200).json({
         bus_customers_data: bus_customers
@@ -49,7 +62,8 @@ const customerShow = (req, res) => {
 
 module.exports = {
     customerIndex,
+    limitCustomerSelect,
     filterCustomeByGender,
-    filterCustomerByPhone,
+    filterCustomer,
     customerShow
 }

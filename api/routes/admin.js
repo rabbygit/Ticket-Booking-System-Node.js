@@ -12,9 +12,16 @@ const bookingRequestController = require("../controllers/admin/dashboard/booking
 
 // Admin Bus Controllers
 const busDashboardController = require("../controllers/admin/bus/dashboard/dashboard")
-const busCustomerController = require("../controllers/admin/bus/dashboard/customer")
-const busMerchantController = require("../controllers/admin/bus/dashboard/merchant")
-
+const busDashboardCustomerController = require("../controllers/admin/bus/dashboard/customer")
+const busDashboardMerchantController = require("../controllers/admin/bus/dashboard/merchant")
+const busDashboardBusListController = require("../controllers/admin/bus/dashboard/bus")
+const busDashboardSalesTicketController = require("../controllers/admin/bus/dashboard/sales_ticket")
+const busDashboardCancelController = require("../controllers/admin/bus/dashboard/cancel_ticket")
+const busDashboardBookingRequestController = require("../controllers/admin/bus/dashboard/booking_request")
+const busDashboardPaidBookedBookingController = require("../controllers/admin/bus/dashboard/paid_booked_booking")
+const busDashboardTodayBusController = require("../controllers/admin/bus/dashboard/today_bus")
+const busDashboardTodayBookedController = require("../controllers/admin/bus/dashboard/today_booked")
+const busDashboardTodayAvailableSeatController = require("../controllers/admin/bus/dashboard/today_available_seat")
 
 
 // Admin Dashboard
@@ -24,46 +31,49 @@ router.get('/dashboard', dashboardController.dashboardIndex)
 
 
 // Transport
-router.get('/dashboard/transport/:limit', transportController.transportIndex)
-router.get('/dashboard/transport/:id/show', transportController.transportShow)
-router.get('/dashboard/transport/:id/edit', transportController.transportEdit)
-router.put('/dashboard/transport/:id/update', transportController.transportUpdate)
-router.delete('/dashboard/transport/:id/delete', transportController.transportDelete)
-router.post('/dashboard/transport/filter/date', transportController.filterByDate)
-router.post('/dashboard/transport/filter/transportid-location', transportController.filterByTransportIdLocation)
+router.get('/dashboard/transport/', transportController.transportIndex)
+router.get('/dashboard/transport/:id/:type/show', transportController.transportShow)
+router.get('/dashboard/transport/:id/:type/edit', transportController.transportEdit)
+router.put('/dashboard/transport/:id/:type/update', transportController.transportUpdate)
+router.delete('/dashboard/transport/:id/:type/delete', transportController.transportDelete)
+router.post('/dashboard/transport/filter/date/', transportController.filterByDate)
+router.post('/dashboard/transport/filter/', transportController.filterTransport)
 
 
 // Customer
-router.get('/dashboard/customer/:limit', customerController.customerIndex)
+router.get('/dashboard/customer/', customerController.customerIndex)
 router.get('/dashboard/customer/:id/show', customerController.customerShow)
 router.delete('/dashboard/customer/:id/delete', customerController.customerDelete)
-router.get('/dashboard/customer/:gender/:limit/select', customerController.customerSelectByLimitGender)
-router.post('/dashboard/customer/filter/phone', customerController.customerFilterByPhone)
+router.get('/dashboard/customer/:gender/select/', customerController.customerSelectByLimitGender)
+router.post('/dashboard/customer/filter/', customerController.customerFilter)
 
 
 // Success Payment
-router.get('/dashboard/success-payment/:limit', successPaymentController.successPaymentsIndex)
-router.post('/dashboard/success-payment/filter', successPaymentController.successPaymentFilter)
+router.get('/dashboard/success-payment/', successPaymentController.successPaymentsIndex)
+router.post('/dashboard/success-payment/:limit/select', successPaymentController.limitSuccessPayments)
+router.post('/dashboard/success-payment/filter/', successPaymentController.successPaymentFilter)
 router.get('/dashboard/success-payment/:id/invoice', successPaymentController.successPaymentInvoiceShow)
 
 
 // Sales Ticket
-router.get('/dashboard/sales-ticket/:limit', salesTicketController.salesTicketIndex)
-router.get('/dashboard/sales-ticket/:date/:limit/select', salesTicketController.salesTicketSelectByDate)
-router.post('/dashboard/sales-ticket/filter', salesTicketController.salesTicketFilter)
+router.get('/dashboard/sales-ticket/', salesTicketController.salesTicketIndex)
+router.get('/dashboard/sales-ticket/limit/select/', salesTicketController.limitSalesTicketSelect)
+router.get('/dashboard/sales-ticket/:date/filter/', salesTicketController.filterbyDateSalesTicket)
+router.post('/dashboard/sales-ticket/filter/', salesTicketController.salesTicketFilter)
 router.get('/dashboard/sales-ticket/:id/show', salesTicketController.salesTicketShow)
 
 
 // Cancel Ticket
-router.get('/dashboard/cancel-ticket/:limit', cancelTicketController.cancelTicketIndex)
-router.get('/dashboard/cancel-ticket/:date/:limit/select', cancelTicketController.cancelTicketSelectByDate)
-router.post('/dashboard/cancel-ticket/filter', cancelTicketController.cancelTicketFilter)
+router.get('/dashboard/cancel-ticket/', cancelTicketController.cancelTicketIndex)
+router.get('/dashboard/cancel-ticket/limit/select/', cancelTicketController.limitCancelTicket)
+router.get('/dashboard/cancel-ticket/:date/filter/', cancelTicketController.cancelTicketFilterByDate)
+router.post('/dashboard/cancel-ticket/filter/', cancelTicketController.cancelTicketFilter)
 router.get('/dashboard/cancel-ticket/:id/show', cancelTicketController.cancelTicketShow)
 
 
 // Booking Request
-router.get('/dashboard/booking-requests/:limit', bookingRequestController.bookingRequestIndex)
-router.post('/dashboard/booking-requests/filter', bookingRequestController.bookingRequestFilter)
+router.get('/dashboard/booking-requests/', bookingRequestController.bookingRequestIndex)
+router.post('/dashboard/booking-requests/filter/', bookingRequestController.bookingRequestFilter)
 router.get('/dashboard/booking-request/:id/show', bookingRequestController.bookingRequestShow)
 router.get('/dashboard/booking-request/:id/edit', bookingRequestController.bookingRequestEdit)
 router.put('/dashboard/booking-request/:id/update', bookingRequestController.bookingRequestUpdate)
@@ -78,20 +88,74 @@ router.delete('/dashboard/booking-request/:id/delete', bookingRequestController.
 router.get('/bus/dashboard/index', busDashboardController.dashboardIndex)
 
 // Bus Dashboard Customer
-router.get('/bus/dashboard/customers/:limit', busCustomerController.customerIndex)
-router.get('/bus/dashboard/customers/:gender/:limit/gender/filter', busCustomerController.filterCustomeByGender)
-router.get('/bus/dashboard/customer/:phone/:limit/phone/filter', busCustomerController.filterCustomerByPhone)
-router.get('/bus/dashboard/customer/:id/show', busCustomerController.customerShow)
+router.get('/bus/dashboard/customers/', busDashboardCustomerController.customerIndex)
+router.get('/bus/dashboard/customers/:limit/select', busDashboardCustomerController.limitCustomerSelect)
+router.get('/bus/dashboard/customers/:gender/gender/filter/', busDashboardCustomerController.filterCustomeByGender)
+router.post('/bus/dashboard/customers/filter/', busDashboardCustomerController.filterCustomer)
+router.get('/bus/dashboard/customers/:id/show', busDashboardCustomerController.customerShow)
 
 // Bus Dashboard Merchant
-router.get('/bus/dashboard/merchants/:limit', busMerchantController.merchantIndex)
-router.post('/bus/dashboard/merchant/filter', busMerchantController.filterMerchantById)
-router.post('/bus/dashboard/merchant/change/status', busMerchantController.changeMerchantStatus)
-router.get('/bus/dashboard/merchant/:id/profile', busMerchantController.showMerchantProfile)
-router.get('/bus/dashboard/merchant/:id/dashboard', busMerchantController.merchantDashboard)
-router.delete('/bus/dashboard/merchant/:id/delete', busMerchantController.deleteMerchant)
+router.get('/bus/dashboard/merchants/', busDashboardMerchantController.merchantIndex)
+router.post('/bus/dashboard/merchants/filter/', busDashboardMerchantController.filterMerchant)
+router.put('/bus/dashboard/merchant/:id/change/status', busDashboardMerchantController.changeMerchantStatus)
+router.get('/bus/dashboard/merchant/:id/profile', busDashboardMerchantController.showMerchantProfile)
+router.get('/bus/dashboard/merchant/:id/dashboard', busDashboardMerchantController.merchantDashboard)
+router.delete('/bus/dashboard/merchant/:id/delete', busDashboardMerchantController.deleteMerchant)
 
+// Bus Dashboard Bus List
+router.get('/bus/dashboard/bus-list/', busDashboardBusListController.busIndex)
+router.get('/bus/dashboard/bus-list/:date/filter/', busDashboardBusListController.filterBusByDate)
+router.post('/bus/dashboard/bus-list/filter/', busDashboardBusListController.filterBus)
+router.get('/bus/dashboard/bus-list/:id/:type/show', busDashboardBusListController.showBus)
+router.get('/bus/dashboard/bus-list/:id/:type/edit', busDashboardBusListController.editBus)
+router.put('/bus/dashboard/bus-list/:id/update', busDashboardBusListController.updateBus)
+router.delete('/bus/dashboard/bus-list/:id/delete', busDashboardBusListController.deleteBus)
 
+// Bus Dashboard Total Ticket Sale
+router.get('/bus/dashboard/sales-ticket/', busDashboardSalesTicketController.salesTicketIndex)
+router.get('/bus/dashboard/sales-ticket/limit/select/', busDashboardSalesTicketController.limitSalesTicketSelect)
+router.get('/bus/dashboard/sales-ticket/:date/filter/', busDashboardSalesTicketController.filterbyDateSalesTicket)
+router.post('/bus/dashboard/sales-ticket/filter/', busDashboardSalesTicketController.salesTicketFilter)
+router.get('/bus/dashboard/sales-ticket/:id/show', busDashboardSalesTicketController.salesTicketShow)
+
+// Bus Dashboard Cancel Ticket
+router.get('/bus/dashboard/cancel-ticket/', busDashboardCancelController.cancelTicketIndex)
+router.get('/bus/dashboard/cancel-ticket/limit/select/', busDashboardCancelController.limitCancelTicket)
+router.get('/bus/dashboard/cancel-ticket/:date/filter/', busDashboardCancelController.cancelTicketFilterByDate)
+router.post('/bus/dashboard/cancel-ticket/filter/', busDashboardCancelController.cancelTicketFilter)
+router.get('/bus/dashboard/cancel-ticket/:id/show', busDashboardCancelController.cancelTicketShow)
+
+// Bus Dashboard Booking Request
+router.get('/bus/dashboard/booking-requests/', busDashboardBookingRequestController.bookingRequestIndex)
+router.post('/bus/dashboard/booking-requests/filter/', busDashboardBookingRequestController.bookingRequestFilter)
+router.get('/bus/dashboard/booking-request/:id/show', busDashboardBookingRequestController.bookingRequestShow)
+router.get('/bus/dashboard/booking-request/:id/edit', busDashboardBookingRequestController.bookingRequestEdit)
+router.put('/bus/dashboard/booking-request/:id/update', busDashboardBookingRequestController.bookingRequestUpdate)
+router.put('/bus/dashboard/booking-request/:id/paid', busDashboardBookingRequestController.bookingRequestPaid)
+router.delete('/bus/dashboard/booking-request/:id/delete', busDashboardBookingRequestController.bookingRequestDelete)
+
+// Bus Dashboard Paid & Booked Booking
+router.get('/bus/dashboard/booking/:status/', busDashboardPaidBookedBookingController.bookingList)
+router.get('/bus/dashboard/booking/:status/limit/select/', busDashboardPaidBookedBookingController.limitBooking)
+router.post('/bus/dashboard/booking/:status/filter/', busDashboardPaidBookedBookingController.filterBooking)
+router.get('/bus/dashboard/booking/:status/:id/show', busDashboardPaidBookedBookingController.showBooking)
+
+// Bus Dashboard Today Bus
+router.get('/bus/dashboard/day/:date/', busDashboardTodayBusController.busList)
+router.post('/bus/dashboard/day/:date/filter/', busDashboardTodayBusController.filterBus)
+router.get('/bus/dashboard/day/:date/:id/show', busDashboardTodayBusController.showBus)
+
+// Bus Dashboard Today Booked
+router.get('/bus/dashboard/today/:date/', busDashboardTodayBookedController.bookedList)
+router.post('/bus/dashboard/today/filter/', busDashboardTodayBookedController.filterBookedList)
+router.get('/bus/dashboard/today/:id/show', busDashboardTodayBookedController.showBus)
+router.get('/bus/dashboard/today/:id/edit', busDashboardTodayBookedController.editBus)
+router.put('/bus/dashboard/today/:id/update', busDashboardTodayBookedController.updateBus)
+router.put('/bus/dashboard/today/:id/cancel', busDashboardTodayBookedController.cancelBooking)
+
+// Bus Dashboard Today Available Seat
+// router.get('/bus/dashboard/today/seats/', busDashboardTodayAvailableSeatController.availableSeats)
+// router.get('/bus/dashboard/today/seats/filter/', busDashboardTodayAvailableSeatController.filterAvailableSeat)
 
 
 module.exports = router

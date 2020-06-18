@@ -3,7 +3,14 @@ const mongoose = require('mongoose')
 const Bus = require("../../../../models/Bus")
 
 // Transports index 
+<<<<<<< HEAD
 const transportIndex = async (req, res, next) => {
+=======
+const transportIndex = (req, res) => {
+    const limit = req.query.limit;
+    const currentPage = req.query.currentPage;
+    const transports = "transports index " + limit + ' ' + currentPage;
+>>>>>>> 38cc0cd5385ea1fa9b92f4389a2a4b1c64bebacb
 
     let itemPerPage = req.query.limit || 50
     let currentPage = req.query.currentPage || 1
@@ -30,6 +37,7 @@ const transportIndex = async (req, res, next) => {
 const transportShow = async (req, res, next) => {
 
     const transport_id = req.params.id
+<<<<<<< HEAD
     let transport_type = req.query.transport_type || "Bus"
     let transport = null;
 
@@ -55,20 +63,31 @@ const transportShow = async (req, res, next) => {
         console.log(e.message)
         next(e)
     }
+=======
+    const transport_type = req.params.type
+
+    res.status(200).json({
+        transport_data: transport_id + ' ' + transport_type
+    })
+>>>>>>> 38cc0cd5385ea1fa9b92f4389a2a4b1c64bebacb
 }
 
 
 // Transport edit
 const transportEdit = (req, res) => {
     const transport_id = req.params.id
+<<<<<<< HEAD
     const { transport_type } = req.params
 
     let {
 
     } = req.body
+=======
+    const transport_type = req.params.type
+>>>>>>> 38cc0cd5385ea1fa9b92f4389a2a4b1c64bebacb
 
     res.status(200).json({
-        transport_data: transport_id
+        transport_data: transport_id + ' ' + transport_type
     })
 }
 
@@ -76,9 +95,10 @@ const transportEdit = (req, res) => {
 // Transport update
 const transportUpdate = (req, res) => {
     const transport_id = req.params.id
+    const transport_type = req.params.type
 
     res.status(200).json({
-        transport_data: transport_id + "transport updated"
+        transport_data: transport_id + "transport updated" + ' ' + transport_type
     })
 }
 
@@ -112,32 +132,30 @@ const transportDelete = async (req, res, next) => {
 }
 
 
+
 // Filter by date
 const filterByDate = (req, res) => {
     const date = req.body.date
-    const limit = req.body.limit
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
 
     res.status(200).json({
-        transport_data: date + "Filter by date" + limit
+        transport_data: date + "Filter by date" + limit + ' ' + currentPage
     })
 }
 
 
-// Filter by Transport ID or Location
-const filterByTransportIdLocation = (req, res) => {
-    const busId = req.body.busid
-    const location = req.body.location
-    const limit = req.body.limit
+// Filter Transport 
+const filterTransport = (req, res) => {
+    const data = req.body.data
+    const limit = req.query.limit
+    const currentPage = req.query.currentPage
 
-    if (busId) {
-        res.status(200).json({
-            transports_data: 'filter by busid ' + busId + ' ' + limit
-        })
-    } else if (location) {
-        res.status(200).json({
-            transports_data: 'filter by location ' + location + ' ' + limit
-        })
-    }
+
+    res.status(200).json({
+        transports_data: 'filter  ' + data + ' ' + limit + ' ' + currentPage
+    })
+
 }
 
 
@@ -148,5 +166,5 @@ module.exports = {
     transportUpdate,
     transportDelete,
     filterByDate,
-    filterByTransportIdLocation
+    filterTransport
 }
