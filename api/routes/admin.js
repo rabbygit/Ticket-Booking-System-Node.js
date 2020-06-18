@@ -161,7 +161,7 @@ router.post('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAva
 
 // Bus Dashboard Merchant
 router.get('/bus/merchant/index/count', busMerchantController.merchantIndex)
-// router.post('/bus/merchant/add'. busMerchantController.addMer)
+router.post('/bus/merchant/add', busMerchantController.addMerchant)
 router.get('/bus/merchant/list/', busMerchantController.merchantList)
 router.post('/bus/merchant/filter/', busMerchantController.filterMerchant)
 router.get('/bus/merchant/:id/view/profile', busMerchantController.viewProfile)
