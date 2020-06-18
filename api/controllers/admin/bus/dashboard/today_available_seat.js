@@ -21,7 +21,7 @@ const filterAvailableSeat = (req, res) => {
     let available_seats
 
     res.status(200).json({
-        available_seats: `${date} limit ${limit} current page ${currentPage} data ${data}`
+        available_seats: `${data} limit ${limit} current page ${currentPage} data ${data}`
     })
 }
 

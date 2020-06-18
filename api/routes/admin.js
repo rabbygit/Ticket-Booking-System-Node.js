@@ -23,6 +23,7 @@ const busDashboardTodayBusController = require("../controllers/admin/bus/dashboa
 const busDashboardTodayBookedController = require("../controllers/admin/bus/dashboard/today_booked")
 const busDashboardTodayAvailableSeatController = require("../controllers/admin/bus/dashboard/today_available_seat")
 
+const busMerchantController = require("../controllers/admin/bus/merchant/merchant")
 
 // Admin Dashboard
 
@@ -154,8 +155,19 @@ router.put('/bus/dashboard/today/:id/update', busDashboardTodayBookedController.
 router.put('/bus/dashboard/today/:id/cancel', busDashboardTodayBookedController.cancelBooking)
 
 // Bus Dashboard Today Available Seat
-// router.get('/bus/dashboard/today/seats/', busDashboardTodayAvailableSeatController.availableSeats)
-// router.get('/bus/dashboard/today/seats/filter/', busDashboardTodayAvailableSeatController.filterAvailableSeat)
+router.get('/bus/dashboard/today/available/seats/', busDashboardTodayAvailableSeatController.availableSeats)
+router.post('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAvailableSeatController.filterAvailableSeat)
+
+
+// Bus Dashboard Merchant
+router.get('/bus/merchant/index/count', busMerchantController.merchantIndex)
+// router.post('/bus/merchant/add'. busMerchantController.addMer)
+router.get('/bus/merchant/list/', busMerchantController.merchantList)
+router.post('/bus/merchant/filter/', busMerchantController.filterMerchant)
+router.get('/bus/merchant/:id/view/profile', busMerchantController.viewProfile)
+router.get('/bus/merchant/:id/dashboard', busMerchantController.merchantDashboard)
+router.put('/bus/merchant/:id/update/status', busMerchantController.merchantStatusUpdate)
+router.delete('/bus/merchant/:id/delete', busMerchantController.deleteMerchant)
 
 
 module.exports = router
