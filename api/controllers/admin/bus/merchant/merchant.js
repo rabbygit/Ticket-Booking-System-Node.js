@@ -44,8 +44,8 @@ const merchantList = (req, res, next) => {
 const filterMerchant = (req, res, next) => {
     let limit = req.query.limit
     let currentPage = req.query.currentPage
-    let merchant_status = req.query.status
 
+    let merchant_status = req.query.status
     let merchantId = req.query.merchant_id
     let merchantContact = req.query.contact
     let merchantAddress = req.query.merchant_address

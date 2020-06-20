@@ -24,6 +24,10 @@ const busDashboardTodayBookedController = require("../controllers/admin/bus/dash
 const busDashboardTodayAvailableSeatController = require("../controllers/admin/bus/dashboard/today_available_seat")
 
 const busMerchantController = require("../controllers/admin/bus/merchant/merchant")
+const busAgentController = require("../controllers/admin/bus/merchant/agent")
+const busBookingController = require("../controllers/admin/bus/booking/booking")
+const busPaymentController = require("../controllers/admin/bus/payment/payment")
+
 
 // Admin Dashboard
 
@@ -162,12 +166,45 @@ router.post('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAva
 // Bus Dashboard Merchant
 router.get('/bus/merchant/index/count', busMerchantController.merchantIndex)
 router.post('/bus/merchant/add', busMerchantController.addMerchant)
-router.get('/bus/merchant/list/', busMerchantController.merchantList)
+router.get('/bus/merchant/:status/list/', busMerchantController.merchantList)
 router.post('/bus/merchant/filter/', busMerchantController.filterMerchant)
 router.get('/bus/merchant/:id/view/profile', busMerchantController.viewProfile)
 router.get('/bus/merchant/:id/dashboard', busMerchantController.merchantDashboard)
 router.put('/bus/merchant/:id/update/status', busMerchantController.merchantStatusUpdate)
 router.delete('/bus/merchant/:id/delete', busMerchantController.deleteMerchant)
+
+
+// Bus Dashboard Agent
+router.post('/bus/agent/add', busAgentController.addAgent)
+router.get('/bus/agent/:status/list/', busAgentController.agentList)
+router.post('/bus/agent/filter/', busAgentController.filterAgent)
+router.get('/bus/agent/:id/view/profile', busAgentController.viewProfile)
+router.get('/bus/agent/:id/dashboard', busAgentController.agentDashboard)
+router.put('/bus/agent/:id/update/status', busAgentController.agentStatusUpdate)
+router.delete('/bus/agent/:id/delete', busAgentController.deleteAgent)
+
+
+// Bus Dashboard Booking
+router.get('/bus/booking/count', busBookingController.bookingCount)
+router.post('/bus/booking/add', busBookingController.addBooking)
+router.get('/bus/booking/list/', busBookingController.bookingList)
+router.post('/bus/booking/filter/', busBookingController.filterBooking)
+router.get('/bus/booking/:status/:limit/select', busBookingController.limitBooking)
+router.get('/bus/booking/:id/show', busBookingController.showBooking)
+router.get('/bus/booking/:id/edit', busBookingController.editBooking)
+router.put('/bus/booking/:id/update', busBookingController.updtaeBooking)
+router.put('/bus/booking/status/:id/update', busBookingController.bookingStatusUpdate)
+router.delete('/bus/booking/:id/delete', busBookingController.deleteBooking)
+
+
+// Bus Dashboard Payment
+router.get('/bus/payment/count', busPaymentController.paymentCount)
+router.get('/bus/payment/list/', busPaymentController.paymentList)
+router.post('/bus/payment/limit/', busPaymentController.limitPayment)
+router.post('/bus/payment/filter/', busPaymentController.filterPayment)
+router.get('/bus/payment/:id/view', busPaymentController.viewPayment)
+router.put('/bus/payment/transaction/:id/change', busPaymentController.paymentTransactionStatus)
+router.delete('/bus/payment/:id/delete', busPaymentController.deletePayment)
 
 
 module.exports = router
