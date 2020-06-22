@@ -10,6 +10,7 @@ const countTotal = (req, res) => {
     let total_today_bus
     let total_today_booked
     let today_available_seat
+    const merchant_id = req.params.id
 
     res.status(200).json({
         total_bus: "Total bus count",

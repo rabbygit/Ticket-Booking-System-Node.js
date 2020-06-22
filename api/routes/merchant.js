@@ -1,10 +1,49 @@
 const express = require('express')
 const router = express.Router()
+
 const dashboardIndexController = require("../controllers/merchant/dashboard/index")
+const dashboardBusController = require("../controllers/merchant/dashboard/bus")
+const dashboardPaymentController = require("../controllers/merchant/dashboard/payment")
+const dashboardTicketController = require("../controllers/merchant/dashboard/ticket")
+const dashboardBookingRequestController = require("../controllers/merchant/dashboard/booking")
 
 
+router.get('/dashboard/:id/index/count', dashboardIndexController.countTotal)
 
-router.get("/dashboard/index/count", dashboardIndexController.countTotal)
+// dashboard bus
+router.post('/dashboard/:merchant_id/bus/add', dashboardBusController.addBus)
+router.get('/dashboard/:merchant_id/bus/list/', dashboardBusController.busList)
+router.post('/dashboard/:merchant_id/date/filter/', dashboardBusController.filterByDate)
+router.get('/dashboard/:merchant_id/bus/filter/', dashboardBusController.filterBus)
+router.get('/dashboard/:merchant_id/bus/:bus_id/show', dashboardBusController.showBus)
+router.put('/dashboard/:merchant_id/bus/:bus_id/update', dashboardBusController.updateBus)
+router.delete('/dashboard/:merchant_id/bus/:bus_id/delete', dashboardBusController.deleteBus)
+
+
+// dashboard payment
+router.get('/dashboard/:merchant_id/payment/', dashboardPaymentController.paymentList)
+router.get('/dashboard/:merchant_id/payment/limit/', dashboardPaymentController.limitPaymentSelect)
+router.post('/dashboard/:merchant_id/payment/filter/', dashboardPaymentController.filterPayment)
+router.get('/dashboard/:merchant_id/payment/:payment_id/invoice', dashboardPaymentController.paymentInvoice)
+
+
+// dashboard ticket
+router.get('/dashboard/:merchant_id/ticket/:status/list/', dashboardTicketController.ticketList)
+router.get('/dashboard/:merchant_id/ticket/:status/limit/', dashboardTicketController.limitTicket)
+router.post('/dashboard/:merchant_id/ticket/:status/filter/', dashboardTicketController.filterTicket)
+router.get('/dashboard/:merchant_id/ticket/:status/:ticket_id', dashboardTicketController.viewTicket)
+
+
+// dashboard booking request
+router.post('/dashboard/:merchant_id/booking/add', dashboardBookingRequestController.addBooking)
+router.get('/dashboard/:merchant_id/booking/:status/requests/', dashboardBookingRequestController.bookingRequests)
+router.post('/dashboard/:merchant_id/booking/:status/request/filter/date/', dashboardBookingRequestController.filterByDate)
+router.post('/dashboard/:merchant_id/booking/:status/request/filter/phone/', dashboardBookingRequestController.filterByPhone)
+router.get('/dashboard/:merchant_id/booking/request/:booking_id/view', dashboardBookingRequestController.viewBooking)
+router.put('/dashboard/:merchant_id/booking/:booking_id/request/update', dashboardBookingRequestController.cancelBooking)
+
+
+// Today bus
 
 
 module.exports = router
