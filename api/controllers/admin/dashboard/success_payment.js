@@ -1,25 +1,59 @@
+const Ticket = require("../../../../models/Ticket")
 
+const checkId = require("../../../../validators/mongooseId")
 
 // Success Payments Index
-const successPaymentsIndex = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    const payments_data = limit + " " + currentPage + " " + "Success payments data"
+const successPaymentsIndex = async (req, res, next) => {
+    try {
+        const successfulPayments = await Ticket.find({
+            "merchantPayment.status": "paid"
+        })
+            .populate({
+                path: "bus",
+                select: "busName seatPrice",
+                populate: {
+                    path: "merchant",
+                    select: "name"
+                }
+            })
 
-    res.status(200).json({
-        success_payments_data: payments_data
-    })
+        res.status(200).json({
+            successfulPayments
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Success payments limit
-const limitSuccessPayments = (req, res) => {
-    const limit = req.params.limit
-    const payments_data = limit + "Payments select"
+const limitSuccessPayments = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
 
-    res.status(200).json({
-        success_payments_data: payments_data
-    })
+    try {
+        const successfulPayments = await Ticket.find({
+            "merchantPayment.status": "paid"
+        })
+            .populate({
+                path: "bus",
+                select: "busName seatPrice",
+                populate: {
+                    path: "merchant",
+                    select: "name"
+                }
+            })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            success_payments_data: itemPerPage + " " + currentPage + " " + "Success payments data",
+            successfulPayments
+        })
+
+    } catch (error) {
+        next(error)
+    }
 }
 
 // Filter Sucess Payments
@@ -35,12 +69,36 @@ const successPaymentFilter = (req, res) => {
 
 
 // Invoice Show
-const successPaymentInvoiceShow = (req, res) => {
-    const payment_id = req.params.id
+const successPaymentInvoiceShow = async (req, res, next) => {
+    const ticket_id = req.params.id
 
-    res.status(200).json({
-        payment_id
-    })
+    try {
+        await checkId(ticket_id)
+        const invoice = await Ticket.findOne({
+            _id: ticket_id
+        })
+            .populate({
+                path: "bus",
+                select: "busName seatPrice",
+                populate: {
+                    path: "merchant",
+                    select: "name"
+                }
+            })
+
+        // if (!invoice) {
+        //     let error = new Error("Invoice Not Found")
+        //     error.status = 404
+        //     throw error
+        // }
+
+        res.status(200).json({
+            ticket_id,
+            invoice
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 

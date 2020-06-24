@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
     if (error.status == 404) {
         return res.status(404).json({
-            message: "404 Page Not Found"
+            message: error.message
         })
     }
     if (error.status == 400) {

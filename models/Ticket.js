@@ -26,15 +26,22 @@ const ticketSchema = new Schema({
         ref: "Seat",
         required: true
     },
-    customerPaymentStatus: {
-        type: String,
-        enum: ["paid", "processing", "canceled", "unpaid"],
-        default: "unpaid"
+    customerPayment: {
+        status: {
+            type: String,
+            enum: ["paid", "processing", "canceled", "unpaid"]
+        },
+        time: Date,
+        paymentMethod: String
     },
-    merchantPaymentStatus: {
-        type: String,
-        enum: ["paid", "processing", "canceled", "unpaid"],
-        default: "unpaid"
+    merchantPayment: {
+        status: {
+            type: String,
+            enum: ["paid", "processing", "canceled", "unpaid"],
+            default: "unpaid"
+        },
+        time: Date,
+        paymentMethod: String
     }
 }, {
     timestamps: true
