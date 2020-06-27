@@ -4,14 +4,6 @@ const morgan = require("morgan")
 const bodyParser = require("body-parser")
 const mongoose = require('mongoose');
 
-// DB Connection here
-mongoose.connect('mongodb://localhost:27017/test', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-});
-
-
 const app = express()
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -49,12 +41,21 @@ app.use((error, req, res, next) => {
     })
 })
 
-// App Port
-const port = process.env.PORT || 3000
+
 app.get('/', (req, res) => {
     res.send("Hello I am node.js application")
 })
 
+// DB Connection here
+const URL = "mongodb+srv://ticket:ticket@cluster0-kns61.mongodb.net/test?retryWrites=true&w=majority"
+mongoose.connect(URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+}).then(() => console.log("Database connected"));
+
+// App Port
+const port = process.env.PORT || 3000
 app.listen(port, () => {
     console.log(`App running on ${port} port`)
 })
