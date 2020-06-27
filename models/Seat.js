@@ -12,7 +12,7 @@ const seatSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["Available", "Booked"]
+        enum: ["available", "booked"]
     },
     class: {
         type: String,

@@ -1,61 +1,123 @@
-
+const Customer = require("../../../../models/Customer")
+const checkId = require("../../../../validators/mongooseId")
 
 // Customer Index
-const customerIndex = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    const customers = "customers index " + limit + ' ' + currentPage;
+const customerIndex = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
 
-    res.status(200).json({
-        customers_data: customers
-    })
+    try {
+        const customers = await Customer.find()
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            customers_data: customers,
+            itemPerPage,
+            currentPage
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Customer show
-const customerShow = (req, res) => {
+const customerShow = async (req, res, next) => {
     const customer_id = req.params.id
 
-    res.status(200).json({
-        customer_data: customer_id
-    })
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.findById(customer_id)
+
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            customer_id,
+            customer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Customer delete
-const customerDelete = (req, res) => {
+const customerDelete = async (req, res, next) => {
     const customer_id = req.params.id
 
-    res.status(200).json({
-        customer_data: customer_id + "customer deleted"
-    })
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.findById(customer_id)
+
+        if (!customer) {
+            let error = new Error()
+            error.status = 404
+            throw error
+        }
+
+        const deletedCustomer = await Customer.findByIdAndDelete(customer_id)
+
+        res.status(200).json({
+            customer_id,
+            deletedCustomer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
-// Customer select by limit & gender
-const customerSelectByLimitGender = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    const gender = req.params.gender
+// Customer filter by limit & gender & customer type
+const customerSelectByLimitGender = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+    const { gender, customerType } = req.query
 
-    res.status(200).json({
-        customer_data: limit + " customer fetch by " + gender + ' page ' + currentPage
-    })
+    try {
+        let customers = await Customer.find({ gender, customerType })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            customer_data: itemPerPage + " customer fetch by " + gender + ' page ' + currentPage,
+            customers
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
-// Customer filter by phone
-const customerFilter = (req, res) => {
-    const data = req.body.data
-    const limit = req.body.limit
-    const currentPage = req.body.currentPage
+// Customer search by phone number
+const customerFilter = async (req, res, next) => {
+    const phoneNumber = req.params.number;
 
-    res.status(200).json({
-        customer_data: data + " customer fetch by " + limit + ' ' + currentPage
-    })
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.findOne({ phoneNumber })
+
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            customer_id,
+            customer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
-
-
 
 
 module.exports = {

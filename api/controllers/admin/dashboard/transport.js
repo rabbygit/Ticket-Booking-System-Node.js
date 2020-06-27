@@ -1,93 +1,120 @@
+const Bus = require("../../../../models/Bus")
 
+const checkId = require("../../../../validators/mongooseId")
 
 // Transports index 
-const transportIndex = (req, res) => {
-    const limit = req.query.limit;
-    const currentPage = req.query.currentPage;
-    const transports = "transports index " + limit + ' ' + currentPage;
+const transportIndex = async (req, res, next) => {
 
-    res.status(200).json({
-        transports_data: transports
-    })
+    let itemPerPage = parseInt(req.query.limit) || 50
+    let currentPage = parseInt(req.query.currentPage) || 1
+
+    try {
+        const transports = await Bus.find()
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            itemPerPage,
+            currentPage,
+            transports_data: transports
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
-// Transport show
-const transportShow = (req, res) => {
+// Show a single transport for view / edit / search result
+const transportShow = async (req, res, next) => {
+
     const transport_id = req.params.id
-    const transport_type = req.params.type
-
-    res.status(200).json({
-        transport_data: transport_id + ' ' + transport_type
-    })
-}
+    let transport_type = req.params.type || "Bus"
 
 
-// Transport edit
-const transportEdit = (req, res) => {
-    const transport_id = req.params.id
-    const transport_type = req.params.type
+    try {
+        // Check valid mongodb id
+        await checkId(transport_id)
 
-    res.status(200).json({
-        transport_data: transport_id + ' ' + transport_type
-    })
+        let transport = transport = await Bus.findById(transport_id);
+        if (!transport) {
+            let e = new Error("Transport not found")
+            e.status = 404
+            throw e
+        }
+
+        res.status(200).json({
+            transport
+        })
+    } catch (e) {
+        next(e)
+    }
 }
 
 
 // Transport update
-const transportUpdate = (req, res) => {
+const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
     const transport_type = req.params.type
+    const updatedData = req.body
+    let transport = null;
 
-    res.status(200).json({
-        transport_data: transport_id + "transport updated" + ' ' + transport_type
-    })
+    try {
+        // Check valid mongodb id
+        await checkId(transport_id)
+
+        let transport = transport = await Bus.findById(transport_id);
+        if (!transport) {
+            let e = new Error("Transport not found")
+            e.status = 404
+            throw e
+        }
+
+        let updatedTransport = await Bus.findOneAndUpdate(
+            { _id: transport_id },
+            { $set: updatedData },
+            { new: true }
+        )
+
+        res.status(200).json({
+            transport_data: transport_id + "transport updated" + ' ' + transport_type,
+            updatedTransport
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Transport delete
-const transportDelete = (req, res) => {
+const transportDelete = async (req, res, next) => {
     const transport_id = req.params.id
     const transport_type = req.params.type
 
-    res.status(200).json({
-        transport_data: transport_id + "transport deleted" + ' ' + transport_type
-    })
+    try {
+        await checkId(transport_id)
+
+        let transport = transport = await Bus.findById(transport_id);
+        if (!transport) {
+            let e = new Error("Transport not found")
+            e.status = 404
+            throw e
+        }
+
+        let deletedTransport = await Bus.findByIdAndDelete(transport_id);
+
+        res.status(200).json({
+            transport_data: transport_id + " transport is deleted",
+            deletedTransport
+        })
+
+    } catch (error) {
+        next(error)
+    }
 }
-
-
-// Filter by date
-const filterByDate = (req, res) => {
-    const date = req.body.date
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-
-    res.status(200).json({
-        transport_data: date + "Filter by date" + limit + ' ' + currentPage
-    })
-}
-
-
-// Filter Transport 
-const filterTransport = (req, res) => {
-    const data = req.body.data
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-
-
-    res.status(200).json({
-        transports_data: 'filter  ' + data + ' ' + limit + ' ' + currentPage
-    })
-
-}
-
 
 module.exports = {
     transportIndex,
     transportShow,
-    transportEdit,
     transportUpdate,
     transportDelete,
-    filterByDate,
-    filterTransport
 }

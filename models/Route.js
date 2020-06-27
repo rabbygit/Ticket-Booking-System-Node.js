@@ -1,6 +1,10 @@
 const { Schema, model } = require("mongoose")
 
 const routeSchema = new Schema({
+    trip: {
+        type: Schema.Types.ObjectId,
+        ref: "Trip"
+    },
     from: {
         type: String,
         required: true,

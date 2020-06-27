@@ -38,6 +38,8 @@ const customerSchema = new Schema({
         enum: ['Male', 'Female'],
         required: true
     },
+    customerType: [String],
+    address: String,
     role: {
         type: String,
         default: "merchant",

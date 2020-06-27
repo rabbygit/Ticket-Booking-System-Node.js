@@ -51,6 +51,7 @@ const merchantSchema = new Schema({
         type: String,
         required: true
     },
+    merchantType: [String],
     role: {
         type: String,
         default: "merchant",

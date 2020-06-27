@@ -6,6 +6,8 @@ const dashboardBusController = require("../controllers/merchant/dashboard/bus")
 const dashboardPaymentController = require("../controllers/merchant/dashboard/payment")
 const dashboardTicketController = require("../controllers/merchant/dashboard/ticket")
 const dashboardBookingRequestController = require("../controllers/merchant/dashboard/booking")
+const dashboardBookedController = require("../controllers/merchant/dashboard/booked")
+const dashboardAvailableSeatController = require("../controllers/merchant/dashboard/seat")
 
 
 router.get('/dashboard/:id/index/count', dashboardIndexController.countTotal)
@@ -21,10 +23,10 @@ router.delete('/dashboard/:merchant_id/bus/:bus_id/delete', dashboardBusControll
 
 
 // dashboard payment
-router.get('/dashboard/:merchant_id/payment/', dashboardPaymentController.paymentList)
-router.get('/dashboard/:merchant_id/payment/limit/', dashboardPaymentController.limitPaymentSelect)
-router.post('/dashboard/:merchant_id/payment/filter/', dashboardPaymentController.filterPayment)
-router.get('/dashboard/:merchant_id/payment/:payment_id/invoice', dashboardPaymentController.paymentInvoice)
+router.get('/dashboard/:merchant_id/:status/payment/', dashboardPaymentController.paymentList)
+router.get('/dashboard/:merchant_id/:status/payment/limit/', dashboardPaymentController.limitPaymentSelect)
+router.post('/dashboard/:merchant_id/:status/payment/filter/', dashboardPaymentController.filterPayment)
+router.get('/dashboard/:merchant_id/:status/payment/:payment_id/invoice', dashboardPaymentController.paymentInvoice)
 
 
 // dashboard ticket
@@ -43,7 +45,20 @@ router.get('/dashboard/:merchant_id/booking/request/:booking_id/view', dashboard
 router.put('/dashboard/:merchant_id/booking/:booking_id/request/update', dashboardBookingRequestController.cancelBooking)
 
 
-// Today bus
+// Today booked
+router.get('/dashboard/:merchant_id/booked/', dashboardBookedController.bookedList)
+router.post('/dashboard/:merchant_id/booked/filter/', dashboardBookedController.filterBooked)
+router.get('/dashboard/:merchant_id/booked/:booked_id/view', dashboardBookedController.viewBooked)
+router.put('/dashboard/:merchant_id/booked/:booked_id/update', dashboardBookedController.updateBooked)
+router.put('/dashboard/:merchant_id/booked/:booked_id/cancel', dashboardBookedController.cancelBooked)
 
+
+// Today available seats
+router.get('/dashboard/:merchant_id/seats/available/', dashboardAvailableSeatController.availableSeatList)
+router.post('/dashboard/:merchant_id/seta/available/filter/', dashboardAvailableSeatController.filterByContact)
+
+
+// Account Management index
+// Account Management success trip tickets
 
 module.exports = router

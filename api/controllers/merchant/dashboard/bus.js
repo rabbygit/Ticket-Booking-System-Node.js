@@ -17,6 +17,7 @@ const busList = (req, res) => {
     const merchant_id = req.params.merchant_id
     const limit = req.query.id
     const currentPage = req.query.currentPage
+    const date = req.query.date
     let busses
 
     res.status(200).json({
@@ -47,6 +48,7 @@ const filterBus = (req, res) => {
     const location = req.query.location
     const seat_price = req.query.seat_price
     const merchant_id = req.params.merchant_id
+    const date = req.body.date
     let busses
 
     res.status(200).json({
