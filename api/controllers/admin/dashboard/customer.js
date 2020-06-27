@@ -31,11 +31,11 @@ const customerShow = async (req, res, next) => {
 
         const customer = await Customer.findById(customer_id)
 
-        // if (!customer) {
-        //     let error = new Error("Customer Not Found")
-        //     error.status = 404
-        //     throw error
-        // }
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
 
         res.status(200).json({
             customer_id,
@@ -56,11 +56,11 @@ const customerDelete = async (req, res, next) => {
 
         const customer = await Customer.findById(customer_id)
 
-        // if (!customer) {
-        //     let error = new Error()
-        //     error.status = 404
-        //     throw error
-        // }
+        if (!customer) {
+            let error = new Error()
+            error.status = 404
+            throw error
+        }
 
         const deletedCustomer = await Customer.findByIdAndDelete(customer_id)
 
@@ -74,14 +74,14 @@ const customerDelete = async (req, res, next) => {
 }
 
 
-// Customer select by limit & gender & phone number & customer type
+// Customer filter by limit & gender & customer type
 const customerSelectByLimitGender = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
-    const { gender, phoneNumber, customerType } = req.query
+    const { gender, customerType } = req.query
 
     try {
-        let customers = await Customer.find({ gender, phoneNumber, customerType })
+        let customers = await Customer.find({ gender, customerType })
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -95,18 +95,29 @@ const customerSelectByLimitGender = async (req, res, next) => {
 }
 
 
-// Customer filter by phone
-const customerFilter = (req, res) => {
-    const data = req.body.data
-    const limit = req.body.limit
-    const currentPage = req.body.currentPage
+// Customer search by phone number
+const customerFilter = async (req, res, next) => {
+    const phoneNumber = req.params.number;
 
-    res.status(200).json({
-        customer_data: data + " customer fetch by " + limit + ' ' + currentPage
-    })
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.findOne({ phoneNumber })
+
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            customer_id,
+            customer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
-
-
 
 
 module.exports = {

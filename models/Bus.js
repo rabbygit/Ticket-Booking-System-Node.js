@@ -39,6 +39,7 @@ const busSchema = new Schema({
         enum: ["AC", "NON AC"]
     },
     totalSeat: Number,
+    availableSeats: Number,
     seatPrice: {
         type: Number,
         required: true

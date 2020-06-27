@@ -1,9 +1,13 @@
 const Ticket = require("../../../../models/Ticket")
+const Merchant = require("../../../../models/Merchant")
 
 const checkId = require("../../../../validators/mongooseId")
 
 // Success Payments Index
 const successPaymentsIndex = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+
     try {
         const successfulPayments = await Ticket.find({
             "merchantPayment.status": "paid"
@@ -16,6 +20,8 @@ const successPaymentsIndex = async (req, res, next) => {
                     select: "name"
                 }
             })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
 
         res.status(200).json({
             successfulPayments
@@ -26,15 +32,48 @@ const successPaymentsIndex = async (req, res, next) => {
 }
 
 
-// Success payments limit
-const limitSuccessPayments = async (req, res, next) => {
+// Success payments limit , filter by date , merchant name
+const successPaymentFilter = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
 
+    const merchantName = req.query.name || "";
+    let merchants = [];
+    let year, month, date;
+    let query = {
+        "merchantPayment.status": "paid"
+    };
+
     try {
-        const successfulPayments = await Ticket.find({
-            "merchantPayment.status": "paid"
-        })
+        // Check Date
+        if (typeof (req.query.date) != "undefined") {
+            if (isNaN(Date.parse(req.query.date))) {
+                let e = new Error()
+                e.status = 400
+                throw e
+            }
+
+            let searchDate = new Date(req.query.date)
+            year = searchDate.getFullYear()
+            month = searchDate.getMonth() - 1; // As month index starts from zero
+            date = searchDate.getDate()
+
+            query = {
+                ...query,
+                "merchantPayment.time": { $gte: new Date(year, month, date), $lt: new Date(year, month, date + 1) }
+            }
+        }
+
+        // Check merchant
+        if (merchantName != "") {
+            merchants = await Merchant.find({ name: merchantName }, "_id").exec()
+            query = {
+                ...query,
+                merchant: { $in: merchants.map(m => m._id) }
+            }
+        }
+
+        let successfulPayments = await Ticket.find(query)
             .populate({
                 path: "bus",
                 select: "busName seatPrice",
@@ -56,17 +95,6 @@ const limitSuccessPayments = async (req, res, next) => {
     }
 }
 
-// Filter Sucess Payments
-const successPaymentFilter = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    const data = req.body.data + ' ' + limit + ' ' + currentPage
-
-    res.status(200).json({
-        data
-    })
-}
-
 
 // Invoice Show
 const successPaymentInvoiceShow = async (req, res, next) => {
@@ -86,11 +114,11 @@ const successPaymentInvoiceShow = async (req, res, next) => {
                 }
             })
 
-        // if (!invoice) {
-        //     let error = new Error("Invoice Not Found")
-        //     error.status = 404
-        //     throw error
-        // }
+        if (!invoice) {
+            let error = new Error("Invoice Not Found")
+            error.status = 404
+            throw error
+        }
 
         res.status(200).json({
             ticket_id,
@@ -104,7 +132,6 @@ const successPaymentInvoiceShow = async (req, res, next) => {
 
 module.exports = {
     successPaymentsIndex,
-    limitSuccessPayments,
     successPaymentFilter,
     successPaymentInvoiceShow
 }

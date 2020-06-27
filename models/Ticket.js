@@ -11,6 +11,10 @@ const ticketSchema = new Schema({
         ref: "Customer",
         required: true
     },
+    merchant: {
+        type: Schema.Types.ObjectId,
+        ref: "Merchant"
+    },
     trip: {
         type: Schema.Types.ObjectId,
         ref: "Trip",

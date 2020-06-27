@@ -38,41 +38,32 @@ router.get('/dashboard', dashboardController.dashboardIndex)
 // Transport
 router.get('/dashboard/transport/', transportController.transportIndex)
 router.get('/dashboard/transport/:id/:type/show', transportController.transportShow)
-router.get('/dashboard/transport/:id/:type/edit', transportController.transportEdit)
 router.put('/dashboard/transport/:id/:type/update', transportController.transportUpdate)
 router.get('/dashboard/transport/:id/:type/delete', transportController.transportDelete)
-router.post('/dashboard/transport/filter/date/', transportController.filterByDate)
-router.post('/dashboard/transport/filter/', transportController.filterTransport)
-
 
 // Customer
 router.get('/dashboard/customer/', customerController.customerIndex)
 router.get('/dashboard/customer/:id/show', customerController.customerShow)
 router.get('/dashboard/customer/:id/delete', customerController.customerDelete)
-router.get('/dashboard/customer/:gender/select/', customerController.customerSelectByLimitGender)
-router.post('/dashboard/customer/filter/', customerController.customerFilter)
+router.get('/dashboard/customer/filter/', customerController.customerSelectByLimitGender)
+router.post('/dashboard/customer/search/:number', customerController.customerFilter)
 
 
 // Success Payment 
 router.get('/dashboard/success-payment/', successPaymentController.successPaymentsIndex)
-router.get('/dashboard/success-payment/select/', successPaymentController.limitSuccessPayments)
-router.post('/dashboard/success-payment/filter/', successPaymentController.successPaymentFilter)
+router.get('/dashboard/success-payment/filter/', successPaymentController.successPaymentFilter)
 router.get('/dashboard/success-payment/:id/invoice', successPaymentController.successPaymentInvoiceShow)
 
 
 // Sales Ticket
 router.get('/dashboard/sales-ticket/', salesTicketController.salesTicketIndex)
-router.get('/dashboard/sales-ticket/limit/select/', salesTicketController.limitSalesTicketSelect)
-router.get('/dashboard/sales-ticket/date/filter/', salesTicketController.filterbyDateSalesTicket)
-router.post('/dashboard/sales-ticket/filter/', salesTicketController.salesTicketFilter)
+router.get('/dashboard/sales-ticket/filter/', salesTicketController.filterbyDateSalesTicket)
 router.get('/dashboard/sales-ticket/:id/show', salesTicketController.salesTicketShow)
 
 
 // Cancel Ticket
 router.get('/dashboard/cancel-ticket/', cancelTicketController.cancelTicketIndex)
-router.get('/dashboard/cancel-ticket/limit/select/', cancelTicketController.limitCancelTicket)
-router.get('/dashboard/cancel-ticket/:date/filter/', cancelTicketController.cancelTicketFilterByDate)
-router.post('/dashboard/cancel-ticket/filter/', cancelTicketController.cancelTicketFilter)
+router.get('/dashboard/cancel-ticket/filter/', cancelTicketController.cancelTicketFilterByDate)
 router.get('/dashboard/cancel-ticket/:id/show', cancelTicketController.cancelTicketShow)
 
 
