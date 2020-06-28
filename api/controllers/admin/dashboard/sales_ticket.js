@@ -52,7 +52,7 @@ const filterbyDateSalesTicket = async (req, res, next) => {
 
     try {
         // Check valid date 
-        if (typeof (req.query.date) != "undefined") {
+        if ((typeof (req.query.date)) != "undefined" && req.query.date != "") {
             if (isNaN(Date.parse(req.query.date))) {
                 let e = new Error()
                 e.status = 400
@@ -61,8 +61,8 @@ const filterbyDateSalesTicket = async (req, res, next) => {
 
             let searchDate = new Date(req.query.date)
             let year = searchDate.getFullYear()
-            let month = searchDate.getMonth() - 1; // As month index starts from zero
-            let date = searchDate.getDate()
+            let month = searchDate.getMonth();
+            let date = searchDate.getDate() + 1
 
             specificTrips = await Trip.find(
                 {

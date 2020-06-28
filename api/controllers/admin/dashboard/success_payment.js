@@ -46,7 +46,7 @@ const successPaymentFilter = async (req, res, next) => {
 
     try {
         // Check Date
-        if (typeof (req.query.date) != "undefined") {
+        if (req.query.date != "" && (typeof (req.query.date) != "undefined")) {
             if (isNaN(Date.parse(req.query.date))) {
                 let e = new Error()
                 e.status = 400
@@ -55,8 +55,8 @@ const successPaymentFilter = async (req, res, next) => {
 
             let searchDate = new Date(req.query.date)
             year = searchDate.getFullYear()
-            month = searchDate.getMonth() - 1; // As month index starts from zero
-            date = searchDate.getDate()
+            month = searchDate.getMonth()
+            date = searchDate.getDate() + 1
 
             query = {
                 ...query,

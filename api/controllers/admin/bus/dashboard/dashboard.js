@@ -15,8 +15,8 @@ const dashboardIndex = async (req, res, next) => {
         booking_requests: "",
         paid_booking: "",
         booked_tickets: "",
-        today_buses: "",
         today_booked_buses: "",
+        today_buses: "",
         today_available_seats: ""
     }
 
@@ -28,8 +28,8 @@ const dashboardIndex = async (req, res, next) => {
         data.total_cancle_ticket = await Ticket.countDocuments({ "customerPayment.status": "canceled" })
 
         // Get Today Date
-        let today = new Date()
-        let date = today.getDate()
+        let today = new Date("2020-06-26")
+        let date = today.getDate() + 1
         let month = today.getMonth()
         let year = today.getFullYear()
 
@@ -38,13 +38,14 @@ const dashboardIndex = async (req, res, next) => {
         let todayTrip = await Trip.find({ departureTime: { $gte: new Date(year, month, date), $lt: new Date(year, month, date + 1) } }, "bus").exec()
         let available_seats = await Bus.find({ _id: { $in: todayTrip.map(trip => trip._id) } }, "availableSeats")
 
-        data.today_available_seats = available_seats.map(o => o.availableSeats).reduce((a, c) => { return a + c });
+        data.today_available_seats = available_seats.map(o => o.availableSeats).reduce((a, c) => { return a + c }, 0);
 
 
         res.status(200).json({
             bus_dashboard_data: data
         })
     } catch (error) {
+        console.log(error.message)
         next(error)
     }
 }
