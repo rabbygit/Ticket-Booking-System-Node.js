@@ -36,17 +36,17 @@ router.get('/dashboard', dashboardController.dashboardIndex)
 
 
 // Transport
-router.get('/dashboard/transport/', transportController.transportIndex)
-router.get('/dashboard/transport/:id/:type/show', transportController.transportShow)
-router.put('/dashboard/transport/:id/:type/update', transportController.transportUpdate)
-router.get('/dashboard/transport/:id/:type/delete', transportController.transportDelete)
+router.get('/dashboard/transport/bus/', transportController.transportIndex)
+router.get('/dashboard/transport/bus/:id/show', transportController.transportShow)
+router.put('/dashboard/transport/bus/:id/update', transportController.transportUpdate)
+router.get('/dashboard/transport/bus/:id/delete', transportController.transportDelete)
 
 // Customer
 router.get('/dashboard/customer/', customerController.customerIndex)
 router.get('/dashboard/customer/:id/show', customerController.customerShow)
 router.get('/dashboard/customer/:id/delete', customerController.customerDelete)
 router.get('/dashboard/customer/filter/', customerController.customerSelectByLimitGender)
-router.post('/dashboard/customer/search/:number', customerController.customerFilter)
+router.get('/dashboard/customer/search/:number', customerController.customerFilter)
 
 
 // Success Payment 

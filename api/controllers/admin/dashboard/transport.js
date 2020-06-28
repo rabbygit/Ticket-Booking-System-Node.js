@@ -1,4 +1,5 @@
 const Bus = require("../../../../models/Bus")
+const Route = require("../../../../models/Route")
 
 const checkId = require("../../../../validators/mongooseId")
 
@@ -10,6 +11,14 @@ const transportIndex = async (req, res, next) => {
 
     try {
         const transports = await Bus.find()
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -23,19 +32,24 @@ const transportIndex = async (req, res, next) => {
     }
 }
 
-
 // Show a single transport for view / edit / search result
 const transportShow = async (req, res, next) => {
-
     const transport_id = req.params.id
-    let transport_type = req.params.type || "Bus"
-
 
     try {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id)
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
+
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
@@ -54,15 +68,13 @@ const transportShow = async (req, res, next) => {
 // Transport update
 const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
-    const transport_type = req.params.type
     const updatedData = req.body
-    let transport = null;
 
     try {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id);
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
@@ -76,7 +88,7 @@ const transportUpdate = async (req, res, next) => {
         )
 
         res.status(200).json({
-            transport_data: transport_id + "transport updated" + ' ' + transport_type,
+            transport_data: transport_id + "transport updated",
             updatedTransport
         })
     } catch (error) {
@@ -88,7 +100,6 @@ const transportUpdate = async (req, res, next) => {
 // Transport delete
 const transportDelete = async (req, res, next) => {
     const transport_id = req.params.id
-    const transport_type = req.params.type
 
     try {
         await checkId(transport_id)
