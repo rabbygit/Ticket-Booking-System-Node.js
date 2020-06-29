@@ -34,12 +34,11 @@ const busPaymentController = require("../controllers/admin/bus/payment/payment")
 // Index
 router.get('/dashboard', dashboardController.dashboardIndex)
 
-
 // Transport
 router.get('/dashboard/transport/', transportController.transportIndex)
-router.get('/dashboard/transport/:id/:type/show', transportController.transportShow)
-router.put('/dashboard/transport/:id/:type/update', transportController.transportUpdate)
-router.get('/dashboard/transport/:id/:type/delete', transportController.transportDelete)
+router.get('/dashboard/transport/:id/show', transportController.transportShow)
+router.put('/dashboard/transport/:id/update', transportController.transportUpdate)
+router.get('/dashboard/transport/:id/delete', transportController.transportDelete)
 
 // Customer
 router.get('/dashboard/customer/', customerController.customerIndex)

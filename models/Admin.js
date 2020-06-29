@@ -40,13 +40,19 @@ const adminSchema = new Schema({
     role: {
         type: String,
         default: "admin",
-        validate: {
-            validator: function (v) {
-                // Check the role
-                return /(?:^|\W)admin(?:$|\W)/.test(v);
-            },
-            message: () => `Role is not valid`
-        },
+        enum: ["admin", "manager"]
+        // validate: {
+        //     validator: function (v) {
+        //         // Check the role
+        //         return /(?:^|\W)admin(?:$|\W)/.test(v);
+        //     },
+        //     message: () => `Role is not valid`
+        // },
+    },
+    access_token: {
+        type: String,
+        trim: true,
+        default: null
     }
 }, {
     timestamps: true

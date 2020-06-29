@@ -26,16 +26,13 @@ const transportIndex = async (req, res, next) => {
 
 // Show a single transport for view / edit / search result
 const transportShow = async (req, res, next) => {
-
     const transport_id = req.params.id
-    let transport_type = req.params.type || "Bus"
-
 
     try {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id);
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
@@ -54,7 +51,6 @@ const transportShow = async (req, res, next) => {
 // Transport update
 const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
-    const transport_type = req.params.type
     const updatedData = req.body
     let transport = null;
 
@@ -62,7 +58,7 @@ const transportUpdate = async (req, res, next) => {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id);
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
@@ -76,7 +72,7 @@ const transportUpdate = async (req, res, next) => {
         )
 
         res.status(200).json({
-            transport_data: transport_id + "transport updated" + ' ' + transport_type,
+            message: true,
             updatedTransport
         })
     } catch (error) {
@@ -88,7 +84,6 @@ const transportUpdate = async (req, res, next) => {
 // Transport delete
 const transportDelete = async (req, res, next) => {
     const transport_id = req.params.id
-    const transport_type = req.params.type
 
     try {
         await checkId(transport_id)
@@ -103,7 +98,7 @@ const transportDelete = async (req, res, next) => {
         let deletedTransport = await Bus.findByIdAndDelete(transport_id);
 
         res.status(200).json({
-            transport_data: transport_id + " transport is deleted",
+            message: true,
             deletedTransport
         })
 
