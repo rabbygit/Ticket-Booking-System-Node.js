@@ -16,7 +16,8 @@ const merchantSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        maxlength: 100
+        maxlength: 100,
+        index: true
     },
     companyLogo: {
         type: String,
@@ -39,6 +40,7 @@ const merchantSchema = new Schema({
         required: true,
         trim: true,
         unique: true,
+        index: true,
         validate: {
             validator: function (v) {
                 // Bangladeshi phone number
@@ -52,6 +54,11 @@ const merchantSchema = new Schema({
         required: true
     },
     merchantType: [String],
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "inactive"
+    },
     role: {
         type: String,
         default: "merchant",

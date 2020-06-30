@@ -1,4 +1,5 @@
 const Bus = require("../../../../models/Bus")
+const Route = require("../../../../models/Route")
 
 const checkId = require("../../../../validators/mongooseId")
 
@@ -10,6 +11,14 @@ const transportIndex = async (req, res, next) => {
 
     try {
         const transports = await Bus.find()
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -23,7 +32,6 @@ const transportIndex = async (req, res, next) => {
     }
 }
 
-
 // Show a single transport for view / edit / search result
 const transportShow = async (req, res, next) => {
     const transport_id = req.params.id
@@ -32,7 +40,16 @@ const transportShow = async (req, res, next) => {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id)
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
+
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
@@ -52,7 +69,6 @@ const transportShow = async (req, res, next) => {
 const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
     const updatedData = req.body
-    let transport = null;
 
     try {
         // Check valid mongodb id
@@ -72,7 +88,7 @@ const transportUpdate = async (req, res, next) => {
         )
 
         res.status(200).json({
-            message: true,
+            transport_data: transport_id + "transport updated",
             updatedTransport
         })
     } catch (error) {

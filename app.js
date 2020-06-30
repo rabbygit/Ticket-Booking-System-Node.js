@@ -53,7 +53,8 @@ const URL = "mongodb+srv://ticket:ticket@cluster0-kns61.mongodb.net/test?retryWr
 mongoose.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    autoIndex: false
 }).then(() => console.log("Database connected"));
 
 // App Port

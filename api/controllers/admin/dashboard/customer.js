@@ -78,7 +78,11 @@ const customerDelete = async (req, res, next) => {
 const customerSelectByLimitGender = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
+<<<<<<< HEAD
     const { gender } = req.query
+=======
+    const gender = req.query.gender || "male"
+>>>>>>> 2d4cfc2fefda5ef3da5eb106762d59c90dc80742
 
     try {
         let customers = await Customer.find({ gender })

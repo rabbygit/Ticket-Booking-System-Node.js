@@ -10,6 +10,7 @@ const dashboardBookedController = require("../controllers/merchant/dashboard/boo
 const dashboardAvailableSeatController = require("../controllers/merchant/dashboard/seat")
 
 
+router.get('/dashboard/merchants', dashboardIndexController.merchants)
 router.get('/dashboard/:id/index/count', dashboardIndexController.countTotal)
 
 // dashboard bus

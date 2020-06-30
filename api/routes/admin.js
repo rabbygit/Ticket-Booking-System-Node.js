@@ -35,17 +35,17 @@ const busPaymentController = require("../controllers/admin/bus/payment/payment")
 router.get('/dashboard', dashboardController.dashboardIndex)
 
 // Transport
-router.get('/dashboard/transport/', transportController.transportIndex)
-router.get('/dashboard/transport/:id/show', transportController.transportShow)
-router.put('/dashboard/transport/:id/update', transportController.transportUpdate)
-router.get('/dashboard/transport/:id/delete', transportController.transportDelete)
+router.get('/dashboard/transport/bus/', transportController.transportIndex)
+router.get('/dashboard/transport/bus/:id/show', transportController.transportShow)
+router.put('/dashboard/transport/bus/:id/update', transportController.transportUpdate)
+router.get('/dashboard/transport/bus/:id/delete', transportController.transportDelete)
 
 // Customer
 router.get('/dashboard/customer/', customerController.customerIndex)
 router.get('/dashboard/customer/:id/show', customerController.customerShow)
 router.get('/dashboard/customer/:id/delete', customerController.customerDelete)
 router.get('/dashboard/customer/filter/', customerController.customerSelectByLimitGender)
-router.post('/dashboard/customer/search/:number', customerController.customerFilter)
+router.get('/dashboard/customer/search/:number', customerController.customerFilter)
 
 
 // Success Payment 
@@ -84,25 +84,25 @@ router.get('/bus/dashboard/index', busDashboardController.dashboardIndex)
 
 // Bus Dashboard Customer
 router.get('/bus/dashboard/customers/', busDashboardCustomerController.customerIndex)
-router.get('/bus/dashboard/customers/:limit/select', busDashboardCustomerController.limitCustomerSelect)
-router.get('/bus/dashboard/customers/:gender/gender/filter/', busDashboardCustomerController.filterCustomeByGender)
-router.post('/bus/dashboard/customers/filter/', busDashboardCustomerController.filterCustomer)
+router.get('/bus/dashboard/customers/filter/', busDashboardCustomerController.filterCustomer)
+router.get('/bus/dashboard/customers/search/:number', busDashboardCustomerController.customerFilterByNumber)
 router.get('/bus/dashboard/customers/:id/show', busDashboardCustomerController.customerShow)
+router.get('/bus/dashboard/customer/:id/delete', busDashboardCustomerController.customerDelete)
+
 
 // Bus Dashboard Merchant
 router.get('/bus/dashboard/merchants/', busDashboardMerchantController.merchantIndex)
-router.post('/bus/dashboard/merchants/filter/', busDashboardMerchantController.filterMerchant)
-router.put('/bus/dashboard/merchant/:id/change/status', busDashboardMerchantController.changeMerchantStatus)
+router.get('/bus/dashboard/merchants/filter/', busDashboardMerchantController.filterMerchant)
+router.get('/bus/dashboard/merchant/:id/change/status', busDashboardMerchantController.changeMerchantStatus)
 router.get('/bus/dashboard/merchant/:id/profile', busDashboardMerchantController.showMerchantProfile)
 router.get('/bus/dashboard/merchant/:id/dashboard', busDashboardMerchantController.merchantDashboard)
 router.delete('/bus/dashboard/merchant/:id/delete', busDashboardMerchantController.deleteMerchant)
 
 // Bus Dashboard Bus List
 router.get('/bus/dashboard/bus-list/', busDashboardBusListController.busIndex)
-router.get('/bus/dashboard/bus-list/:date/filter/', busDashboardBusListController.filterBusByDate)
-router.post('/bus/dashboard/bus-list/filter/', busDashboardBusListController.filterBus)
-router.get('/bus/dashboard/bus-list/:id/:type/show', busDashboardBusListController.showBus)
-router.get('/bus/dashboard/bus-list/:id/:type/edit', busDashboardBusListController.editBus)
+router.get('/bus/dashboard/bus-list/filter/', busDashboardBusListController.filterBus)
+router.get('/bus/dashboard/bus-list/:id/show', busDashboardBusListController.showBus)
+router.get('/bus/dashboard/bus-list/:id/edit', busDashboardBusListController.editBus)
 router.put('/bus/dashboard/bus-list/:id/update', busDashboardBusListController.updateBus)
 router.delete('/bus/dashboard/bus-list/:id/delete', busDashboardBusListController.deleteBus)
 

@@ -1,32 +1,52 @@
+const Bus = require("../../../../models/Bus")
+const Payment = require("../../../../models/Payment")
+const Merchant = require("../../../../models/Merchant")
 
+const merchants = async (req, res, next) => {
+    try {
+        const merchantAll = await Merchant.find()
+        const busAll = await Bus.find()
+        const paymentAll = await Payment.find()
+        res.status(200).json({
+            merchantAll,
+            busAll,
+            paymentAll
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 // Count information
-const countTotal = (req, res) => {
-    let total_bus
-    let success_payments
-    let total_sales_ticket
-    let total_cancel_ticket
-    let total_booking_request
-    let total_today_bus
-    let total_today_booked
-    let today_available_seat
+const countTotal = async (req, res, next) => {
     const merchant_id = req.params.id
+    const dashboard_data = {
+        total_bus: "",
+        success_payments: "",
+        total_sales_ticket: "",
+        total_cancel_ticket: "",
+        total_booking_request: "",
+        total_today_bus: "",
+        total_today_booked: "",
+        today_available_seat: ""
+    }
 
-    res.status(200).json({
-        total_bus: "Total bus count",
-        success_payments: "Total success payments count",
-        total_sales_ticket: "Total sales ticket",
-        total_cancel_ticket: "Total cancel ticket",
-        total_booking_request: "Total booking request",
-        total_today_bus: "Total today bus",
-        total_today_booked: "Total today booked",
-        today_available_seat: "Total today available seat"
-    })
+    try {
+        dashboard_data.total_bus = await Bus.countDocuments({ merchant: merchant_id })
+        dashboard_data.success_payments = await Bus.countDocuments({  })
+
+        res.status(200).json({
+            dashboard_data
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 
 
 module.exports = {
+    merchants,
     countTotal
 }
