@@ -78,10 +78,10 @@ const customerDelete = async (req, res, next) => {
 const customerSelectByLimitGender = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
-    const { gender, customerType } = req.query
+    const { gender } = req.query
 
     try {
-        let customers = await Customer.find({ gender, customerType })
+        let customers = await Customer.find({ gender })
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -100,8 +100,6 @@ const customerFilter = async (req, res, next) => {
     const phoneNumber = req.params.number;
 
     try {
-        await checkId(customer_id)
-
         const customer = await Customer.findOne({ phoneNumber })
 
         if (!customer) {
@@ -111,7 +109,6 @@ const customerFilter = async (req, res, next) => {
         }
 
         res.status(200).json({
-            customer_id,
             customer
         })
     } catch (error) {
