@@ -1,6 +1,7 @@
 const Admin = require("../../../models/Admin")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
+nodemailer = require('nodemailer')
 
 const register = async (req, res, next) => {
     try {
@@ -84,6 +85,50 @@ const login = async (req, res, next) => {
 }
 
 
+// Password Reset
+const passwordReset = async (req, res, next) => {
+    try {
+        const output = `
+                    <h5>Name: ${req.body.senderName}</h5>
+                    <p><strong>Message:</strong> ${req.body.senderMessage}</p>
+                    <h4>Click to reply ${req.body.senderMail}</h4>
+                    `;
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            secure: false,
+            auth: {
+                user: 'mhmamun166009@gmail.com',
+                pass: '1118964208'
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        let mailOptions = {
+            from: req.body.senderMail,
+            to: 'mhmamun166009@gmail.com',
+            subject: 'Client Message',
+            text: 'Active Your Account?',
+            html: output
+        };
+
+        // send mail with defined transport object
+        transporter.sendMail(mailOptions, (error, info) => {
+            next(error)
+            res.status(201).json({
+                message: 'success',
+            })
+        });
+
+
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 // Logout
 const logout = async (req, res, next) => {
     try {
@@ -109,5 +154,6 @@ const logout = async (req, res, next) => {
 module.exports = {
     register,
     login,
+    passwordReset,
     logout
 }
