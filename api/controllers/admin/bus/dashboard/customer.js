@@ -1,69 +1,123 @@
+const Customer = require("../../../../../models/Customer")
+const checkId = require("../../../../../validators/mongooseId")
 
-// Customer List
-const customerIndex = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    let bus_customers = "Bus customers " + limit + " " + currentPage
+// Customer Index
+const customerIndex = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
 
-    res.status(200).json({
-        bus_customers_data: bus_customers
-    })
+    try {
+        const customers = await Customer.find({ customerType: "bus" })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            customers,
+            itemPerPage,
+            currentPage
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
+// Filter customer by gender
+const filterCustomer = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+    const gender = req.query.gender || "male"
 
-// Limit Customer Select
-const limitCustomerSelect = (req, res) => {
-    const limit = req.params.limit
-    let bus_customers = "Limit Bus customers " + limit
+    try {
+        let customers = await Customer.find({ customerType: "bus", gender })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
 
-    res.status(200).json({
-        bus_customers_data: bus_customers
-    })
+        res.status(200).json({
+            customer_data: itemPerPage + " customer fetch by " + gender + ' page ' + currentPage,
+            customers
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
-// Filter using gender
-const filterCustomeByGender = (req, res) => {
-    const gender = req.params.gender
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
+// Show customer by phone number
+const customerFilterByNumber = async (req, res, next) => {
+    const phoneNumber = req.params.number;
 
-    let bus_customers = "Bus customers by gender " + gender + ' ' + limit + ' ' + currentPage
+    try {
+        const customer = await Customer.findOne({ customerType: "bus", phoneNumber })
 
-    res.status(200).json({
-        bus_customers_data: bus_customers
-    })
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            customer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
-
-// Filter customer with phone
-const filterCustomer = (req, res) => {
-    const data = req.body.data
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-
-    let bus_customers = "Bus customers filter by " + data + ' ' + limit + ' ' + currentPage
-
-    res.status(200).json({
-        bus_customers_data: bus_customers
-    })
-}
-
-
-// Show customer info
-const customerShow = (req, res) => {
+// Show customer by specific id
+const customerShow = async (req, res, next) => {
     const customer_id = req.params.id
 
-    let customer = "This customer " + customer_id
-    res.status(200).json({
-        bus_customer_info: customer
-    })
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.find({ _id: customer_id, customerType: "bus" })
+
+        if (!customer) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            customer_id,
+            customer
+        })
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+// Customer delete
+const customerDelete = async (req, res, next) => {
+    const customer_id = req.params.id
+
+    try {
+        await checkId(customer_id)
+
+        const customer = await Customer.findById(customer_id)
+
+        if (!customer) {
+            let error = new Error()
+            error.status = 404
+            throw error
+        }
+
+        const deletedCustomer = await Customer.findOneAndDelete({ _id: customer_id, customerType: "bus" })
+
+        res.status(200).json({
+            customer_id,
+            deletedCustomer
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 module.exports = {
     customerIndex,
-    limitCustomerSelect,
-    filterCustomeByGender,
+    customerFilterByNumber,
     filterCustomer,
-    customerShow
+    customerShow,
+    customerDelete
 }

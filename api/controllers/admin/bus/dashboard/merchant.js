@@ -1,51 +1,99 @@
-
-
+const Merchant = require("../../../../../models/Merchant")
+const checkId = require("../../../../../validators/mongooseId")
 // Merchant Index
-const merchantIndex = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    let merchants = "Merchant list " + limit + ' ' + currentPage
+const merchantIndex = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
 
-    res.status(200).json({
-        merchant_data: merchants
-    })
+    try {
+        let merchants = await Merchant.find({ merchantType: "bus" })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            merchants
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
-// Filter Merchant ID
-const filterMerchant = (req, res) => {
-    const data = req.body.data
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    let merchant = "Filtered Merchant " + data + ' ' + limit + ' ' + currentPage
+// Filter Merchant company name
+const filterMerchant = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+    const data = req.query.search
+    try {
+        let merchant = await Merchant.find({ $text: { $search: data } })
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
 
-    res.status(200).json({
-        merchant: merchant
-    })
+        res.status(200).json({
+            merchant
+        })
+    } catch (error) {
+        console.log(error.message)
+        next(error)
+    }
 }
 
 
 // Merchant status
-const changeMerchantStatus = (req, res) => {
+const changeMerchantStatus = async (req, res, next) => {
     const merchant_id = req.params.id
     const status = req.body.status
 
-    let message
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id).exec()
 
-    res.status(200).json({
-        message: true
-    })
+        if (!merchant) {
+            let error = new Error("Merchant Not Found")
+            error.status = 404
+            throw error
+        }
+
+        if (merchant.status == "active") {
+            merchant = await Merchant.findOneAndUpdate(
+                { _id: merchant_id },
+                { $set: { status: "inactive" } },
+                { $new: true }
+            )
+        } else {
+            merchant = await Merchant.findOneAndUpdate(
+                { _id: merchant_id },
+                { $set: { status: "active" } },
+                { $new: true }
+            )
+        }
+
+        res.status(200).json({
+            merchant
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Merchant Profile
-const showMerchantProfile = (req, res) => {
+const showMerchantProfile = async (req, res, next) => {
     const merchant_id = req.params.id
-
-    let merchant = "Merchant profile " + merchant_id
-    res.status(200).json({
-        merchant
-    })
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id)
+        if (!merchant) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+        res.status(200).json({
+            merchant
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
@@ -61,13 +109,23 @@ const merchantDashboard = (req, res) => {
 
 
 // Delete merchant
-const deleteMerchant = (req, res) => {
+const deleteMerchant = async (req, res, next) => {
     const merchant_id = req.params.id
-    let message
-
-    res.status(200).json({
-        message
-    })
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id)
+        if (!merchant) {
+            let error = new Error("Customer Not Found")
+            error.status = 404
+            throw error
+        }
+        await Merchant.findByIdAndDelete(merchant_id)
+        res.status(200).json({
+            merchant
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 

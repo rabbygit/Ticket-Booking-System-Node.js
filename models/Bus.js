@@ -36,7 +36,7 @@ const busSchema = new Schema({
     },
     busType: {
         type: String,
-        enum: ["AC", "NON AC"]
+        enum: ["AC", "N/AC"]
     },
     totalSeat: Number,
     availableSeats: Number,
