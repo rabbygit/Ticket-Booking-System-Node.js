@@ -114,7 +114,7 @@ const transportDelete = async (req, res, next) => {
         let deletedTransport = await Bus.findByIdAndDelete(transport_id);
 
         res.status(200).json({
-            transport_data: transport_id + " transport is deleted",
+            message: true,
             deletedTransport
         })
 

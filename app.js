@@ -12,10 +12,12 @@ app.use(cors())
 
 
 // Main Routes
+const authRoute = require("./api/routes/auth")
 const adminRoute = require("./api/routes/admin")
 const merchantRoute = require("./api/routes/merchant")
 
 // API URL's
+app.use("/dhakaboss/ticketing/api/auth", authRoute)
 app.use("/dhakaboss/ticketing/api/admin", adminRoute)
 app.use("/dhakaboss/ticketing/api/merchant", merchantRoute)
 

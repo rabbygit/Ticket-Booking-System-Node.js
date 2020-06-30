@@ -34,7 +34,6 @@ const busPaymentController = require("../controllers/admin/bus/payment/payment")
 // Index
 router.get('/dashboard', dashboardController.dashboardIndex)
 
-
 // Transport
 router.get('/dashboard/transport/bus/', transportController.transportIndex)
 router.get('/dashboard/transport/bus/:id/show', transportController.transportShow)
