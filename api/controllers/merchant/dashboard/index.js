@@ -33,7 +33,10 @@ const countTotal = async (req, res, next) => {
 
     try {
         dashboard_data.total_bus = await Bus.countDocuments({ merchant: merchant_id })
-        dashboard_data.success_payments = await Bus.countDocuments({  })
+        dashboard_data.success_payments = await Payment.countDocuments({ merchant: merchant_id })
+            .populate({
+                path: "Bus"
+            })
 
         res.status(200).json({
             dashboard_data
