@@ -25,6 +25,11 @@ const ticketSchema = new Schema({
         ref: "Bus",
         required: true
     },
+    route: {
+        type: Schema.Types.ObjectId,
+        ref: "Route",
+        required: true
+    },
     seat: {
         type: Schema.Types.ObjectId,
         ref: "Seat",

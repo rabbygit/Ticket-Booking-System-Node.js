@@ -33,7 +33,6 @@ const filterMerchant = async (req, res, next) => {
             merchant
         })
     } catch (error) {
-        console.log(error.message)
         next(error)
     }
 }
@@ -42,7 +41,6 @@ const filterMerchant = async (req, res, next) => {
 // Merchant status
 const changeMerchantStatus = async (req, res, next) => {
     const merchant_id = req.params.id
-    const status = req.body.status
 
     try {
         await checkId(merchant_id)
@@ -55,18 +53,20 @@ const changeMerchantStatus = async (req, res, next) => {
         }
 
         if (merchant.status == "active") {
-            merchant = await Merchant.findOneAndUpdate(
+            await Merchant.findOneAndUpdate(
                 { _id: merchant_id },
                 { $set: { status: "inactive" } },
                 { $new: true }
             )
         } else {
-            merchant = await Merchant.findOneAndUpdate(
+            await Merchant.findOneAndUpdate(
                 { _id: merchant_id },
                 { $set: { status: "active" } },
                 { $new: true }
             )
         }
+
+        merchant = await Merchant.findById(merchant_id)
 
         res.status(200).json({
             merchant
@@ -84,7 +84,7 @@ const showMerchantProfile = async (req, res, next) => {
         await checkId(merchant_id)
         let merchant = await Merchant.findById(merchant_id)
         if (!merchant) {
-            let error = new Error("Customer Not Found")
+            let error = new Error("Merchant Not Found")
             error.status = 404
             throw error
         }
@@ -115,7 +115,7 @@ const deleteMerchant = async (req, res, next) => {
         await checkId(merchant_id)
         let merchant = await Merchant.findById(merchant_id)
         if (!merchant) {
-            let error = new Error("Customer Not Found")
+            let error = new Error("Merchant Not Found")
             error.status = 404
             throw error
         }
