@@ -52,7 +52,8 @@ mongoose.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-    autoIndex: false
+    autoIndex: false,
+    useFindAndModify: false
 }).then(() => console.log("Database connected"));
 
 // App Port

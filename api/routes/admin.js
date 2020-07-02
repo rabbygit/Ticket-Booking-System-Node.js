@@ -109,15 +109,11 @@ router.delete('/bus/dashboard/bus-list/:id/delete', busDashboardBusListControlle
 
 // Bus Dashboard Total Ticket Sale
 router.get('/bus/dashboard/sales-ticket/', busDashboardSalesTicketController.salesTicketIndex)
-router.get('/bus/dashboard/sales-ticket/limit/select/', busDashboardSalesTicketController.limitSalesTicketSelect)
-router.get('/bus/dashboard/sales-ticket/:date/filter/', busDashboardSalesTicketController.filterbyDateSalesTicket)
-router.post('/bus/dashboard/sales-ticket/filter/', busDashboardSalesTicketController.salesTicketFilter)
+router.get('/bus/dashboard/sales-ticket/filter/', busDashboardSalesTicketController.salesTicketFilter)
 router.get('/bus/dashboard/sales-ticket/:id/show', busDashboardSalesTicketController.salesTicketShow)
 
 // Bus Dashboard Cancel Ticket
 router.get('/bus/dashboard/cancel-ticket/', busDashboardCancelController.cancelTicketIndex)
-router.get('/bus/dashboard/cancel-ticket/limit/select/', busDashboardCancelController.limitCancelTicket)
-router.get('/bus/dashboard/cancel-ticket/:date/filter/', busDashboardCancelController.cancelTicketFilterByDate)
 router.post('/bus/dashboard/cancel-ticket/filter/', busDashboardCancelController.cancelTicketFilter)
 router.get('/bus/dashboard/cancel-ticket/:id/show', busDashboardCancelController.cancelTicketShow)
 
@@ -137,9 +133,9 @@ router.post('/bus/dashboard/booking/:status/filter/', busDashboardPaidBookedBook
 router.get('/bus/dashboard/booking/:status/:id/show', busDashboardPaidBookedBookingController.showBooking)
 
 // Bus Dashboard Today Bus
-router.get('/bus/dashboard/day/:date/', busDashboardTodayBusController.busList)
-router.post('/bus/dashboard/day/:date/filter/', busDashboardTodayBusController.filterBus)
-router.get('/bus/dashboard/day/:date/:id/show', busDashboardTodayBusController.showBus)
+router.get('/bus/dashboard/today/bus', busDashboardTodayBusController.busList)
+router.get('/bus/dashboard/today/bus/filter/', busDashboardTodayBusController.filterBus)
+router.get('/bus/dashboard/today/bus/:id/show', busDashboardTodayBusController.showBus)
 
 // Bus Dashboard Today Booked
 router.get('/bus/dashboard/today/:date/', busDashboardTodayBookedController.bookedList)
@@ -151,7 +147,7 @@ router.put('/bus/dashboard/today/:id/cancel', busDashboardTodayBookedController.
 
 // Bus Dashboard Today Available Seat
 router.get('/bus/dashboard/today/available/seats/', busDashboardTodayAvailableSeatController.availableSeats)
-router.post('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAvailableSeatController.filterAvailableSeat)
+router.get('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAvailableSeatController.filterAvailableSeat)
 
 
 // Bus Dashboard Merchant
