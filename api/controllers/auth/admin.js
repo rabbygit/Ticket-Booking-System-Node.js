@@ -129,6 +129,25 @@ const passwordReset = async (req, res, next) => {
 }
 
 
+// Me
+const myProfile = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decode = jwt.verify(token, 'SECRET')
+
+        let admin = await Admin.findOne({ $and: [{ _id: decode.id }, { email: decode.email }] }, { password: 0 })
+        if (admin) {
+            res.status(200).json({
+                message: true,
+                admin
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 // Logout
 const logout = async (req, res, next) => {
     try {
@@ -154,6 +173,7 @@ const logout = async (req, res, next) => {
 module.exports = {
     register,
     login,
+    myProfile,
     passwordReset,
     logout
 }
