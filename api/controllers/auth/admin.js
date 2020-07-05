@@ -56,7 +56,7 @@ const login = async (req, res, next) => {
             const result = await bcrypt.compare(password, admin.password)
 
             if (result) {
-                const token = jwt.sign({ id: admin._id, email: admin.email, role: admin.role }, 'SECRET', { expiresIn: '1d' })
+                const token = jwt.sign({ id: admin._id, name: admin.name, email: admin.email, role: admin.role }, 'SECRET', { expiresIn: '1d' })
                 const updateToken = await Admin.findByIdAndUpdate({ _id: admin._id }, { $set: { 'access_token': token } })
                 if (updateToken) {
                     res.status(200).json({
