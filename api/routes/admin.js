@@ -36,6 +36,7 @@ router.get('/dashboard', dashboardController.dashboardIndex)
 
 // Transport
 router.get('/dashboard/transport/bus/', transportController.transportIndex)
+router.get('/dashboard/transport/bus/search', transportController.transportSearch)
 router.get('/dashboard/transport/bus/:id/show', transportController.transportShow)
 router.put('/dashboard/transport/bus/:id/update', transportController.transportUpdate)
 router.get('/dashboard/transport/bus/:id/delete', transportController.transportDelete)
@@ -153,10 +154,10 @@ router.get('/bus/dashboard/today/available/seats/filter/', busDashboardTodayAvai
 router.get('/bus/merchant/index/count', busMerchantController.merchantIndex)
 router.post('/bus/merchant/add', busMerchantController.addMerchant)
 router.get('/bus/merchant/:status/list/', busMerchantController.merchantList)
-router.post('/bus/merchant/filter/', busMerchantController.filterMerchant)
+router.get('/bus/merchant/:status/filter/', busMerchantController.filterMerchant)
 router.get('/bus/merchant/:id/view/profile', busMerchantController.viewProfile)
 router.get('/bus/merchant/:id/dashboard', busMerchantController.merchantDashboard)
-router.put('/bus/merchant/:id/update/status', busMerchantController.merchantStatusUpdate)
+router.get('/bus/merchant/:id/update/status', busMerchantController.merchantStatusUpdate)
 router.delete('/bus/merchant/:id/delete', busMerchantController.deleteMerchant)
 
 

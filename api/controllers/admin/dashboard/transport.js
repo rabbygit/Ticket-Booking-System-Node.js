@@ -1,5 +1,4 @@
 const Bus = require("../../../../models/Bus")
-const Route = require("../../../../models/Route")
 
 const checkId = require("../../../../validators/mongooseId")
 
@@ -25,14 +24,39 @@ const transportIndex = async (req, res, next) => {
         res.status(200).json({
             itemPerPage,
             currentPage,
-            transports_data: transports
+            transports
         })
     } catch (error) {
         next(error)
     }
 }
 
-// Show a single transport for view / edit / search result
+const transportSearch = async (req, res, next) => {
+    let busNumber = req.query.number
+    try {
+        let transport = await Bus.findOne({ busNumber })
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
+
+        if (!transport) {
+            let e = new Error("Transport not found")
+            e.status = 404
+            throw e
+        }
+
+        res.status(200).json(transport)
+    } catch (error) {
+        next(error)
+    }
+}
+
+// Show a single transport for view / edit 
 const transportShow = async (req, res, next) => {
     const transport_id = req.params.id
 
@@ -56,9 +80,7 @@ const transportShow = async (req, res, next) => {
             throw e
         }
 
-        res.status(200).json({
-            transport
-        })
+        res.status(200).json(transport)
     } catch (e) {
         next(e)
     }
@@ -87,10 +109,7 @@ const transportUpdate = async (req, res, next) => {
             { new: true }
         )
 
-        res.status(200).json({
-            transport_data: transport_id + "transport updated",
-            updatedTransport
-        })
+        res.status(200).json(updatedTransport)
     } catch (error) {
         next(error)
     }
@@ -113,10 +132,7 @@ const transportDelete = async (req, res, next) => {
 
         let deletedTransport = await Bus.findByIdAndDelete(transport_id);
 
-        res.status(200).json({
-            message: true,
-            deletedTransport
-        })
+        res.status(200).json(deletedTransport)
 
     } catch (error) {
         next(error)
@@ -125,6 +141,7 @@ const transportDelete = async (req, res, next) => {
 
 module.exports = {
     transportIndex,
+    transportSearch,
     transportShow,
     transportUpdate,
     transportDelete,

@@ -1,18 +1,19 @@
+const Merchant = require("../../../../../models/Merchant")
 
-
+const checkId = require("../../../../../validators/mongooseId")
 // Merchant Index
-const merchantIndex = (req, res, next) => {
-    let all_merchant
-    let merchant_request
-    let all_agent
-    let agent_request
+const merchantIndex = async (req, res, next) => {
+    let data = {}
+    try {
+        data.all_merchant = await Merchant.countDocuments({ merchantType: "bus" })
+        data.merchant_request = await Merchant.countDocuments({ merchantType: "bus", status: "inactive" })
+        data.all_agent = "Wait for next update"
+        data.agent_request = "Wait for next update"
 
-    res.status(200).json({
-        all_merchant: "All merchant count",
-        merchant_request: "All merchant request count",
-        all_agent: "All agent count",
-        agent_request: "All agent request count",
-    })
+        res.status(200).json(data)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
@@ -28,43 +29,75 @@ const addMerchant = (req, res, next) => {
 
 
 // Merchant List
-const merchantList = (req, res, next) => {
-    let limit = req.query.limit
-    let currentPage = req.query.currentPage
-    let merchant_status = req.params.status
-    let merchantList
+const merchantList = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+    const { status } = req.params
+    let query = {
+        merchantType: "bus"
+    }
+    try {
+        if (status == "inactive") {
+            query = {
+                ...query,
+                status
+            }
+        }
 
-    res.status(200).json({
-        merchantList: `total Merchants ${limit} ${currentPage} ${merchant_status}`
-    })
+        let merchants = await Merchant.find(query)
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json(merchants)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Merchant Filter
-const filterMerchant = (req, res, next) => {
-    let limit = req.query.limit
-    let currentPage = req.query.currentPage
+const filterMerchant = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+    const data = req.query.search || ""
+    const { status } = req.params
+    let query = {
+        merchantType: "bus",
+        status
+    }
+    try {
+        if (data != "") {
+            query = {
+                ...query,
+                $text: { $search: data }
+            }
+        }
+        let merchants = await Merchant.find(query)
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
 
-    let merchant_status = req.query.status
-    let merchantId = req.query.merchant_id
-    let merchantContact = req.query.contact
-    let merchantAddress = req.query.merchant_address
-    let merchantList
-
-    res.status(200).json({
-        merchantList: `filter Merchants ${limit} ${currentPage}`
-    })
+        res.status(200).json(merchants)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Merchant Profile view
-const viewProfile = (req, res, next) => {
+const viewProfile = async (req, res, next) => {
     const merchant_id = req.params.id
-    let merchant_info
-
-    res.status(200).json({
-        merchant_info: `${merchant_id} information`
-    })
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id)
+        if (!merchant) {
+            let error = new Error("Merchant Not Found")
+            error.status = 404
+            throw error
+        }
+        res.status(200).json(merchant)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
@@ -80,25 +113,58 @@ const merchantDashboard = (req, res, next) => {
 
 
 // Merchant Status Update
-const merchantStatusUpdate = (req, res, next) => {
-    let merchantId = req.params.id
-    let status = req.body.status
-    let message
+const merchantStatusUpdate = async (req, res, next) => {
+    const merchant_id = req.params.id
 
-    res.status(200).json({
-        message: true
-    })
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id).exec()
+
+        if (!merchant) {
+            let error = new Error("Merchant Not Found")
+            error.status = 404
+            throw error
+        }
+
+        if (merchant.status == "active") {
+            await Merchant.findOneAndUpdate(
+                { _id: merchant_id },
+                { $set: { status: "inactive" } },
+                { $new: true }
+            )
+        } else {
+            await Merchant.findOneAndUpdate(
+                { _id: merchant_id },
+                { $set: { status: "active" } },
+                { $new: true }
+            )
+        }
+
+        merchant = await Merchant.findById(merchant_id)
+
+        res.status(200).json(merchant)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Delete Merchant
-const deleteMerchant = (req, res, next) => {
-    let merchantId = req.params.id
-    let message
-
-    res.status(200).json({
-        message: true
-    })
+const deleteMerchant = async (req, res, next) => {
+    const merchant_id = req.params.id
+    try {
+        await checkId(merchant_id)
+        let merchant = await Merchant.findById(merchant_id)
+        if (!merchant) {
+            let error = new Error("Merchant Not Found")
+            error.status = 404
+            throw error
+        }
+        await Merchant.findByIdAndDelete(merchant_id)
+        res.status(200).json(merchant)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
