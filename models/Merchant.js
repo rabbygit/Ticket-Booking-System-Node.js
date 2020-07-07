@@ -8,36 +8,35 @@ const validateEmail = function (email) {
 const merchantSchema = new Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, "Name is required"],
         trim: true,
         maxlength: 50
     },
     companyName: {
         type: String,
-        required: true,
+        required: [true, "Company name is required"],
         trim: true,
         maxlength: 100,
         index: true
     },
     companyLogo: {
-        type: String,
-        required: true
+        type: String
     },
     address: {
         type: String,
-        required: true
+        required: [true, 'Address is required']
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         unique: true,
         trim: true,
         lowercase: true,
-        validate: [validateEmail, 'Please provide a valid email address']
+        validate: [validateEmail, 'Email address is not valid.']
     },
     phoneNumber: {
         type: String,
-        required: true,
+        required: [true, 'Phone number is required'],
         trim: true,
         unique: true,
         index: true,
@@ -46,12 +45,12 @@ const merchantSchema = new Schema({
                 // Bangladeshi phone number
                 return /^(?:\+?88)?01[15-9]\d{8}$/.test(v);
             },
-            message: props => `${props.value} is not a valid phone number!`
+            message: `Phone number is not valid.`
         },
     },
     password: {
         type: String,
-        required: true
+        required: [true, 'Password is required']
     },
     merchantType: [String],
     status: {

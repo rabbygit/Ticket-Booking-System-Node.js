@@ -1,30 +1,51 @@
+const Ticket = require("../../../../../models/Ticket")
 
 // Payment Count
-const paymentCount = (req, res) => {
-    const payment_requests = "Payment requests"
-    const processing_payments = "processing Payment"
-    const success_payments = "Success Payment"
-    const cancel_payments = "Cancel Payment"
+const paymentCount = async (req, res, next) => {
+    let data = {}
 
-    res.status(200).json({
-        payment_requests,
-        processing_payments,
-        success_payments,
-        cancel_payments
-    })
+    try {
+        data.payment_requests = await Ticket.countDocuments({ "merchantPayment.status": "request" })
+        data.processing_payments = await Ticket.countDocuments({ "merchantPayment.status": "processing" })
+        data.success_payments = await Ticket.countDocuments({ "merchantPayment.status": "paid" })
+        data.cancel_payments = await Ticket.countDocuments({ "merchantPayment.status": "canceled" })
+
+        res.status(200).json({ data })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
 // Payment List
-const paymentList = (req, res) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
-    const payment_status = req.query.status
-    const payments = `${payment_status} payments`
+const paymentList = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
 
-    res.status(200).json({
-        payments_data: payments
-    })
+    const { status } = req.params
+
+    try {
+        let payments = await Ticket.find(
+            { "merchantPayment.status": status },
+            "_id"
+        )
+            .populate({
+                path: "bus",
+                select: "busNumber busName seatPrice"
+            })
+            .populate("merchant", "name")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
+            .skip((itemPerPage * currentPage) - itemPerPage)
+            .limit(itemPerPage)
+
+        res.status(200).json({
+            payments
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 
