@@ -1,5 +1,4 @@
 const Bus = require("../../../../models/Bus")
-
 const checkId = require("../../../../validators/mongooseId")
 
 // Transports index 
