@@ -10,16 +10,14 @@ const merchantIndex = async (req, res, next) => {
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
-        res.status(200).json({
-            merchants
-        })
+        res.status(200).json(merchants)
     } catch (error) {
         next(error)
     }
 }
 
 
-// Filter Merchant company name
+// Filter Merchant company name or phone number
 const filterMerchant = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
@@ -29,9 +27,7 @@ const filterMerchant = async (req, res, next) => {
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
-        res.status(200).json({
-            merchant
-        })
+        res.status(200).json(merchant)
     } catch (error) {
         next(error)
     }
@@ -68,9 +64,7 @@ const changeMerchantStatus = async (req, res, next) => {
 
         merchant = await Merchant.findById(merchant_id)
 
-        res.status(200).json({
-            merchant
-        })
+        res.status(200).json(merchant)
     } catch (error) {
         next(error)
     }
@@ -88,9 +82,7 @@ const showMerchantProfile = async (req, res, next) => {
             error.status = 404
             throw error
         }
-        res.status(200).json({
-            merchant
-        })
+        res.status(200).json(merchant)
     } catch (error) {
         next(error)
     }
@@ -102,9 +94,7 @@ const merchantDashboard = (req, res) => {
     const merchant_id = req.params.id
 
     let merchant = "Merchant dashboard " + merchant_id
-    res.status(200).json({
-        merchant
-    })
+    res.status(200).json(merchant)
 }
 
 
@@ -120,9 +110,7 @@ const deleteMerchant = async (req, res, next) => {
             throw error
         }
         await Merchant.findByIdAndDelete(merchant_id)
-        res.status(200).json({
-            merchant
-        })
+        res.status(200).json(merchant)
     } catch (error) {
         next(error)
     }

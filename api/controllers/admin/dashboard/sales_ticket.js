@@ -1,5 +1,6 @@
 const Ticket = require("../../../../models/Ticket")
 const Trip = require("../../../../models/Trip")
+const Bus = require("../../../../models/Bus")
 
 const checkId = require("../../../../validators/mongooseId")
 
@@ -19,12 +20,9 @@ const salesTicketIndex = async (req, res, next) => {
             })
             .populate({
                 path: "trip",
-                select: "departureTime arrivalTime",
-                populate: {
-                    path: "route",
-                    select: "from to"
-                }
+                select: "departureTime arrivalTime"
             })
+            .populate("route", "from to")
             .populate("seat", "row col")
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
@@ -78,12 +76,12 @@ const filterbyDateSalesTicket = async (req, res, next) => {
             }
         }
 
-        // check valid transport id
+        // Query by Bus number
         if (transport_id != "") {
-            await checkId(transport_id)
+            let bus = await Bus.findOne({ busNumber: transport_id }, "_id").exec()
             query = {
                 ...query,
-                bus: transport_id
+                bus: bus._id
             }
         }
 
@@ -145,10 +143,7 @@ const salesTicketShow = async (req, res, next) => {
             throw error
         }
 
-        res.status(200).json({
-            ticket,
-            ticket_id
-        })
+        res.status(200).json(ticket)
     } catch (error) {
         next(error)
     }

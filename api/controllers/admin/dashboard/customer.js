@@ -12,7 +12,7 @@ const customerIndex = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            customers_data: customers,
+            customers,
             itemPerPage,
             currentPage
         })
@@ -37,10 +37,7 @@ const customerShow = async (req, res, next) => {
             throw error
         }
 
-        res.status(200).json({
-            customer_id,
-            customer
-        })
+        res.status(200).json(customer)
     } catch (error) {
         next(error)
     }
@@ -64,10 +61,7 @@ const customerDelete = async (req, res, next) => {
 
         const deletedCustomer = await Customer.findByIdAndDelete(customer_id)
 
-        res.status(200).json({
-            customer_id,
-            deletedCustomer
-        })
+        res.status(200).json(deletedCustomer)
     } catch (error) {
         next(error)
     }
@@ -78,11 +72,7 @@ const customerDelete = async (req, res, next) => {
 const customerSelectByLimitGender = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
-<<<<<<< HEAD
-    const { gender } = req.query
-=======
     const gender = req.query.gender || "male"
->>>>>>> 2d4cfc2fefda5ef3da5eb106762d59c90dc80742
 
     try {
         let customers = await Customer.find({ gender })
@@ -112,9 +102,7 @@ const customerFilter = async (req, res, next) => {
             throw error
         }
 
-        res.status(200).json({
-            customer
-        })
+        res.status(200).json(customer)
     } catch (error) {
         next(error)
     }

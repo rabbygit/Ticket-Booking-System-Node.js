@@ -11,13 +11,13 @@ const register = async (req, res, next) => {
         let existAdmin = await Admin.findOne({ $or: [{ email: email }, { phoneNumber: phone }] })
 
         if (existAdmin) {
-            res.status(200).json({
+            return res.status(200).json({
                 message: "exist"
             })
         } else {
             bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) {
-                    res.json({
+                    return res.json({
                         error: err
                     })
                 }
@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
 
                 let admin = newAdmin.save()
                 if (admin) {
-                    res.status(201).json({
+                    return res.status(201).json({
                         message: true
                     })
                 }
