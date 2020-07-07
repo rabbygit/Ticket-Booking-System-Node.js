@@ -2,8 +2,8 @@ const Bus = require("../../../../models/Bus")
 
 const checkId = require("../../../../validators/mongooseId")
 
-// Transports index 
-const transportIndex = async (req, res, next) => {
+// Transports Bus
+const transportBus = async (req, res, next) => {
 
     let itemPerPage = parseInt(req.query.limit) || 50
     let currentPage = parseInt(req.query.currentPage) || 1
@@ -50,7 +50,9 @@ const transportSearch = async (req, res, next) => {
             throw e
         }
 
-        res.status(200).json(transport)
+        res.status(200).json({
+            transport
+        })
     } catch (error) {
         next(error)
     }
@@ -80,7 +82,9 @@ const transportShow = async (req, res, next) => {
             throw e
         }
 
-        res.status(200).json(transport)
+        res.status(200).json({
+            transport
+        })
     } catch (e) {
         next(e)
     }
@@ -90,7 +94,7 @@ const transportShow = async (req, res, next) => {
 // Transport update
 const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
-    const updatedData = req.body
+    const { updatedData } = req.body
 
     try {
         // Check valid mongodb id
@@ -109,7 +113,10 @@ const transportUpdate = async (req, res, next) => {
             { new: true }
         )
 
-        res.status(200).json(updatedTransport)
+        res.status(200).json({
+            success: true,
+            updatedTransport
+        })
     } catch (error) {
         next(error)
     }
@@ -132,7 +139,10 @@ const transportDelete = async (req, res, next) => {
 
         let deletedTransport = await Bus.findByIdAndDelete(transport_id);
 
-        res.status(200).json(deletedTransport)
+        res.status(200).json({
+            success: true,
+            deletedTransport
+        })
 
     } catch (error) {
         next(error)
@@ -140,7 +150,7 @@ const transportDelete = async (req, res, next) => {
 }
 
 module.exports = {
-    transportIndex,
+    transportBus,
     transportSearch,
     transportShow,
     transportUpdate,

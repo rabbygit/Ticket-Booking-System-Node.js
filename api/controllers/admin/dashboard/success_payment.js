@@ -14,12 +14,12 @@ const successPaymentsIndex = async (req, res, next) => {
         })
             .populate({
                 path: "bus",
-                select: "busName seatPrice",
-                populate: {
-                    path: "merchant",
-                    select: "name"
-                }
+                select: "busNumber busName seatPrice"
             })
+            .populate("merchant", "name")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -76,12 +76,12 @@ const successPaymentFilter = async (req, res, next) => {
         let successfulPayments = await Ticket.find(query)
             .populate({
                 path: "bus",
-                select: "busName seatPrice",
-                populate: {
-                    path: "merchant",
-                    select: "name"
-                }
+                select: "busNumber busName seatPrice"
             })
+            .populate("merchant", "name")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
 
@@ -107,12 +107,12 @@ const successPaymentInvoiceShow = async (req, res, next) => {
         })
             .populate({
                 path: "bus",
-                select: "busName seatPrice",
-                populate: {
-                    path: "merchant",
-                    select: "name"
-                }
+                select: "busNumber busName seatPrice"
             })
+            .populate("merchant", "name")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
 
         if (!invoice) {
             let error = new Error("Invoice Not Found")

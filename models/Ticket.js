@@ -46,7 +46,7 @@ const ticketSchema = new Schema({
     merchantPayment: {
         status: {
             type: String,
-            enum: ["paid", "processing", "canceled", "unpaid"],
+            enum: ["paid", "processing", "canceled", "unpaid", "request"],
             default: "unpaid"
         },
         time: Date,
