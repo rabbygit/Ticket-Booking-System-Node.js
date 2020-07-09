@@ -46,7 +46,7 @@ const salesTicketFilter = async (req, res, next) => {
 
     let from = (req.query.from) || ""
     let to = (req.query.to) || ""
-    let transport_id = req.query.id || ""
+    let transport_number = req.query.number || ""
     let specificTrips = [];
     let query = {
         "customerPayment.status": "paid"
@@ -81,8 +81,8 @@ const salesTicketFilter = async (req, res, next) => {
         }
 
         // Query by Bus number
-        if (transport_id != "") {
-            let bus = await Bus.findOne({ busNumber: transport_id }, "_id").exec()
+        if (transport_number != "") {
+            let bus = await Bus.findOne({ busNumber: transport_number }, "_id").exec()
             query = {
                 ...query,
                 bus: bus._id
@@ -132,7 +132,7 @@ const salesTicketShow = async (req, res, next) => {
     const ticket_id = req.params.id
     try {
         await checkId(ticket_id)
-        let ticket = await Ticket.findOne({ "customerPayment.status": "paid", _id: ticket_id })
+        let ticket = await Ticket.findOne({ _id: ticket_id, "customerPayment.status": "paid" })
             .populate("customer", "name phoneNumber")
             .populate({
                 path: "bus",

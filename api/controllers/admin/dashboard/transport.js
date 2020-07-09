@@ -2,14 +2,14 @@ const Bus = require("../../../../models/Bus")
 
 const checkId = require("../../../../validators/mongooseId")
 
-// Transports Bus
-const transportBus = async (req, res, next) => {
+// All Transports 
+const allTransports = async (req, res, next) => {
 
     let itemPerPage = parseInt(req.query.limit) || 50
     let currentPage = parseInt(req.query.currentPage) || 1
 
     try {
-        const transports = await Bus.find()
+        let transports = await Bus.find()
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -32,9 +32,9 @@ const transportBus = async (req, res, next) => {
 }
 
 const transportSearch = async (req, res, next) => {
-    let busNumber = req.query.number
+    let contactNumber = req.query.number
     try {
-        let transport = await Bus.findOne({ busNumber })
+        let transport = await Bus.findOne({ contactNumber })
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -94,7 +94,7 @@ const transportShow = async (req, res, next) => {
 // Transport update
 const transportUpdate = async (req, res, next) => {
     const transport_id = req.params.id
-    const { updatedData } = req.body
+    const updatedData = req.body.data
 
     try {
         // Check valid mongodb id
@@ -111,7 +111,7 @@ const transportUpdate = async (req, res, next) => {
             { _id: transport_id },
             { $set: updatedData },
             { new: true }
-        )
+        ).exec()
 
         res.status(200).json({
             success: true,
@@ -137,11 +137,11 @@ const transportDelete = async (req, res, next) => {
             throw e
         }
 
-        let deletedTransport = await Bus.findByIdAndDelete(transport_id);
+        await Bus.findByIdAndDelete(transport_id);
 
         res.status(200).json({
             success: true,
-            deletedTransport
+            transport
         })
 
     } catch (error) {
@@ -150,7 +150,7 @@ const transportDelete = async (req, res, next) => {
 }
 
 module.exports = {
-    transportBus,
+    allTransports,
     transportSearch,
     transportShow,
     transportUpdate,

@@ -101,6 +101,14 @@ const showBus = async (req, res, next) => {
     try {
         await checkId(bus_id)
         let bus = await Bus.findById(bus_id)
+            .populate({
+                path: "departureTrip",
+                select: "_id",
+                populate: {
+                    path: "route",
+                    select: "from to"
+                }
+            })
         if (!bus) {
             let error = new Error("Bus Not Found")
             error.status = 404
@@ -113,29 +121,6 @@ const showBus = async (req, res, next) => {
         next(error)
     }
 }
-
-
-// Edit Bus
-const editBus = async (req, res, next) => {
-    const bus_id = req.params.id
-
-    try {
-        await checkId(bus_id)
-        let bus = await Bus.findById(bus_id)
-        if (!bus) {
-            let error = new Error("Bus Not Found")
-            error.status = 404
-            throw error
-        }
-
-        res.status(200).json({
-            bus
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
 
 // Update Bus
 const updateBus = async (req, res, next) => {
@@ -153,10 +138,11 @@ const updateBus = async (req, res, next) => {
         bus = await Bus.findOneAndUpdate(
             { _id: bus_id },
             { $set: updateData },
-            { $new: true }
-        )
+            { new: true }
+        ).exec()
 
         res.status(200).json({
+            success: true,
             bus
         })
     } catch (error) {
@@ -178,9 +164,10 @@ const deleteBus = async (req, res, next) => {
             throw error
         }
 
-        bus = await Bus.findByIdAndDelete(bus_id)
+        await Bus.findByIdAndDelete(bus_id)
 
         res.status(200).json({
+            success: true,
             bus
         })
     } catch (error) {
@@ -193,7 +180,6 @@ module.exports = {
     busIndex,
     filterBus,
     showBus,
-    editBus,
     updateBus,
     deleteBus
 }

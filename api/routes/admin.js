@@ -35,36 +35,36 @@ const busPaymentController = require("../controllers/admin/bus/payment/payment")
 router.get('/dashboard', dashboardController.dashboardIndex)
 
 // Transport
-router.get('/dashboard/transport/bus', transportController.transportBus)
-router.get('/dashboard/transport/bus/search', transportController.transportSearch)
-router.get('/dashboard/transport/bus/:id/show', transportController.transportShow)
-router.post('/dashboard/transport/bus/:id/update', transportController.transportUpdate)
-router.get('/dashboard/transport/bus/:id/delete', transportController.transportDelete)
+router.get('/dashboard/transport/all', transportController.allTransports)
+router.get('/dashboard/transport/all/search', transportController.transportSearch)
+router.get('/dashboard/transport/all/:id/show', transportController.transportShow)
+router.post('/dashboard/transport/all/:id/update', transportController.transportUpdate)
+router.get('/dashboard/transport/all/:id/delete', transportController.transportDelete)
 
 // Customer
-router.get('/dashboard/customer/', customerController.customerIndex)
-router.get('/dashboard/customer/:id/show', customerController.customerShow)
-router.get('/dashboard/customer/:id/delete', customerController.customerDelete)
-router.get('/dashboard/customer/filter/', customerController.customerSelectByLimitGender)
-router.get('/dashboard/customer/search/:number', customerController.customerFilter)
+router.get('/dashboard/customers/all', customerController.customerIndex)
+router.get('/dashboard/customers/all/filter/', customerController.customerSelectByLimitGender)
+router.get('/dashboard/customers/all/search/:number', customerController.customerFilter)
+router.get('/dashboard/customers/all/:id/show', customerController.customerShow)
+router.get('/dashboard/customers/all/:id/delete', customerController.customerDelete)
 
 
 // Success Payment 
-router.get('/dashboard/success-payment/', successPaymentController.successPaymentsIndex)
-router.get('/dashboard/success-payment/filter/', successPaymentController.successPaymentFilter)
-router.get('/dashboard/success-payment/:id/invoice', successPaymentController.successPaymentInvoiceShow)
+router.get('/dashboard/success-payment/all', successPaymentController.successPaymentsIndex)
+router.get('/dashboard/success-payment/all/filter/', successPaymentController.successPaymentFilter)
+router.get('/dashboard/success-payment/all/:id/invoice', successPaymentController.successPaymentInvoiceShow)
 
 
 // Sales Ticket
-router.get('/dashboard/sales-ticket/', salesTicketController.salesTicketIndex)
-router.get('/dashboard/sales-ticket/filter/', salesTicketController.filterbyDateSalesTicket)
-router.get('/dashboard/sales-ticket/:id/show', salesTicketController.salesTicketShow)
+router.get('/dashboard/sales-ticket/all', salesTicketController.salesTicketIndex)
+router.get('/dashboard/sales-ticket/all/filter/', salesTicketController.filterbyDateSalesTicket)
+router.get('/dashboard/sales-ticket/all/:id/show', salesTicketController.salesTicketShow)
 
 
 // Cancel Ticket
-router.get('/dashboard/cancel-ticket/', cancelTicketController.cancelTicketIndex)
-router.get('/dashboard/cancel-ticket/filter/', cancelTicketController.cancelTicketFilterByDate)
-router.get('/dashboard/cancel-ticket/:id/show', cancelTicketController.cancelTicketShow)
+router.get('/dashboard/cancel-ticket/all', cancelTicketController.cancelTicketIndex)
+router.get('/dashboard/cancel-ticket/all/filter', cancelTicketController.cancelTicketFilterByDate)
+router.get('/dashboard/cancel-ticket/all/:id/show', cancelTicketController.cancelTicketShow)
 
 
 // Booking Request
@@ -100,12 +100,11 @@ router.get('/bus/dashboard/merchant/:id/dashboard', busDashboardMerchantControll
 router.get('/bus/dashboard/merchant/:id/delete', busDashboardMerchantController.deleteMerchant)
 
 // Bus Dashboard Bus List
-router.get('/bus/dashboard/bus-list/', busDashboardBusListController.busIndex)
-router.get('/bus/dashboard/bus-list/filter/', busDashboardBusListController.filterBus)
-router.get('/bus/dashboard/bus-list/:id/show', busDashboardBusListController.showBus)
-router.get('/bus/dashboard/bus-list/:id/edit', busDashboardBusListController.editBus)
-router.post('/bus/dashboard/bus-list/:id/update', busDashboardBusListController.updateBus)
-router.get('/bus/dashboard/bus-list/:id/delete', busDashboardBusListController.deleteBus)
+router.get('/bus/dashboard/bus/', busDashboardBusListController.busIndex)
+router.get('/bus/dashboard/bus/search/', busDashboardBusListController.filterBus)
+router.get('/bus/dashboard/bus/:id/show', busDashboardBusListController.showBus)
+router.post('/bus/dashboard/bus/:id/update', busDashboardBusListController.updateBus)
+router.get('/bus/dashboard/bus/:id/delete', busDashboardBusListController.deleteBus)
 
 // Bus Dashboard Total Ticket Sale
 router.get('/bus/dashboard/sales-ticket/', busDashboardSalesTicketController.salesTicketIndex)
@@ -187,10 +186,9 @@ router.get('/bus/booking/:id/delete', busBookingController.deleteBooking)
 // Bus Dashboard Payment
 router.get('/bus/payment/count', busPaymentController.paymentCount)
 router.get('/bus/payment/:status/list/', busPaymentController.paymentList)
-router.post('/bus/payment/limit/', busPaymentController.limitPayment)
-router.post('/bus/payment/filter/', busPaymentController.filterPayment)
-router.get('/bus/payment/:id/view', busPaymentController.viewPayment)
-router.post('/bus/payment/transaction/:id/change', busPaymentController.paymentTransactionStatus)
+router.get('/bus/payment/:status/search', busPaymentController.searchPayment)
+router.get('/bus/payment/:status/:id/view', busPaymentController.viewPayment)
+router.get('/bus/payment/transaction/:id/accept', busPaymentController.paymentTransactionStatus)
 router.get('/bus/payment/:id/delete', busPaymentController.deletePayment)
 
 

@@ -177,20 +177,18 @@ const merchantStatusUpdate = async (req, res, next) => {
         }
 
         if (merchant.status == "active") {
-            await Merchant.findOneAndUpdate(
+            merchant = await Merchant.findOneAndUpdate(
                 { _id: merchant_id },
                 { $set: { status: "inactive" } },
-                { $new: true }
-            )
+                { new: true }
+            ).exec()
         } else {
-            await Merchant.findOneAndUpdate(
+            merchant = await Merchant.findOneAndUpdate(
                 { _id: merchant_id },
                 { $set: { status: "active" } },
-                { $new: true }
-            )
+                { new: true }
+            ).exec()
         }
-
-        merchant = await Merchant.findById(merchant_id)
 
         res.status(200).json({
             success: true,

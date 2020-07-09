@@ -33,8 +33,9 @@ const filterCustomer = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            customer_data: itemPerPage + " customer fetch by " + gender + ' page ' + currentPage,
-            customers
+            customers,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
         next(error)
