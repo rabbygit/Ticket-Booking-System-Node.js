@@ -61,11 +61,11 @@ const customerDelete = async (req, res, next) => {
             throw error
         }
 
-        const deletedCustomer = await Customer.findByIdAndDelete(customer_id)
+        await Customer.findByIdAndDelete(customer_id)
 
         res.status(200).json({
             success: true,
-            deletedCustomer
+            customer
         })
     } catch (error) {
         next(error)
@@ -85,7 +85,9 @@ const customerSelectByLimitGender = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            customers
+            customers,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
         next(error)

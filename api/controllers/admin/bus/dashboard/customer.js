@@ -79,7 +79,6 @@ const customerShow = async (req, res, next) => {
         }
 
         res.status(200).json({
-            customer_id,
             customer
         })
     } catch (error) {
@@ -103,11 +102,11 @@ const customerDelete = async (req, res, next) => {
             throw error
         }
 
-        const deletedCustomer = await Customer.findOneAndDelete({ _id: customer_id, customerType: "bus" })
+        await Customer.findOneAndDelete({ _id: customer_id, customerType: "bus" })
 
         res.status(200).json({
-            customer_id,
-            deletedCustomer
+            success: true,
+            customer
         })
     } catch (error) {
         next(error)
