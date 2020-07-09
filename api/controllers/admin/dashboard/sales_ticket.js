@@ -137,7 +137,9 @@ const salesTicketShow = async (req, res, next) => {
             throw error
         }
 
-        res.status(200).json(ticket)
+        res.status(200).json({
+            ticket
+        })
     } catch (error) {
         next(error)
     }

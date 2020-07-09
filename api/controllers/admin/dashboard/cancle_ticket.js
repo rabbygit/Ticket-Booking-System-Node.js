@@ -43,7 +43,7 @@ const cancelTicketIndex = async (req, res, next) => {
 const cancelTicketFilterByDate = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
-    const transport_id = req.query.id || ""
+    const transport_number = req.query.number || ""
     let specificTrips = [];
     let query = {
         "customerPayment.status": "canceled"
@@ -78,15 +78,15 @@ const cancelTicketFilterByDate = async (req, res, next) => {
         }
 
         // check valid transport id
-        if (transport_id != "") {
-            await checkId(transport_id)
+        if (transport_number != "") {
+            let bus = await Bus.findOne({ busNumber: transport_number }, "_id").exec()
             query = {
                 ...query,
-                bus: transport_id
+                bus: bus._id
             }
         }
 
-        let sales_ticket = await Ticket.find(query)
+        let cancel_ticket = await Ticket.find(query)
             .populate("customer", "name phoneNumber")
             .populate({
                 path: "bus",
@@ -105,7 +105,7 @@ const cancelTicketFilterByDate = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            sales_ticket,
+            cancel_ticket,
             itemPerPage,
             currentPage
         })
@@ -122,32 +122,28 @@ const cancelTicketShow = async (req, res, next) => {
     try {
         await checkId(ticket_id)
 
-        const canceled_ticket = await Ticket.findById(ticket_id)
+        const ticket = await Ticket.findById(ticket_id)
             .populate("customer", "name phoneNumber")
             .populate({
                 path: "bus",
                 select: "busNumber busName busType seatPrice",
-                populate: {
-                    path: "departureTrip",
-                    select: "departureTime arrivalTime",
-                    populate: {
-                        path: "route",
-                        select: "from to"
-                    }
-                }
             })
+            .populate({
+                path: "trip",
+                select: "departureTime arrivalTime"
+            })
+            .populate("route", "from to")
             .populate("seat", "row col")
             .exec()
 
-        if (!canceled_ticket) {
+        if (!ticket) {
             let error = new Error("Ticket Not Found")
             error.status = 404
             throw error
         }
 
         res.status(200).json({
-            canceled_ticket,
-            ticket_id
+            ticket
         })
     } catch (error) {
         next(error)

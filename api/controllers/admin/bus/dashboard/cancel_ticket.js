@@ -143,6 +143,7 @@ const cancelTicketShow = async (req, res, next) => {
             })
             .populate("route", "from to")
             .populate("seat", "row col")
+            .exec()
 
         if (!ticket) {
             let error = new Error("Ticket Not Found")
