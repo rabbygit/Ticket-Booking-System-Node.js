@@ -186,7 +186,7 @@ router.get('/bus/booking/:id/delete', busBookingController.deleteBooking)
 // Bus Dashboard Payment
 router.get('/bus/payment/count', busPaymentController.paymentCount)
 router.get('/bus/payment/:status/list/', busPaymentController.paymentList)
-router.get('/bus/payment/:status/search', busPaymentController.searchPayment)
+router.get('/bus/payment/:status/filter', busPaymentController.searchPayment)
 router.get('/bus/payment/:status/:id/view', busPaymentController.viewPayment)
 router.get('/bus/payment/transaction/:id/accept', busPaymentController.paymentTransactionStatus)
 router.get('/bus/payment/:id/delete', busPaymentController.deletePayment)

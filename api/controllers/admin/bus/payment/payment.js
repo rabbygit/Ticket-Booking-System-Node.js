@@ -28,10 +28,7 @@ const paymentList = async (req, res, next) => {
 
     try {
         status = status.toLowerCase()
-        let payments = await Ticket.find(
-            { "merchantPayment.status": status },
-            "_id"
-        )
+        let payments = await Ticket.find({ "merchantPayment.status": status })
             .populate({
                 path: "bus",
                 select: "busNumber busName seatPrice"
@@ -44,7 +41,9 @@ const paymentList = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            payments
+            payments,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
         next(error)
@@ -58,12 +57,33 @@ const searchPayment = async (req, res, next) => {
 
     let { status } = req.params
     let { name = '' } = req.query
+    let year, month, date;
+
     status = status.toLowerCase()
     let query = {
         "merchantPayment.status": status
     }
 
     try {
+        // Check Date
+        if (req.query.date != "" && (typeof (req.query.date) != "undefined")) {
+            if (isNaN(Date.parse(req.query.date))) {
+                let e = new Error()
+                e.status = 400
+                throw e
+            }
+
+            let searchDate = new Date(req.query.date)
+            year = searchDate.getFullYear()
+            month = searchDate.getMonth()
+            date = searchDate.getDate() + 1
+
+            query = {
+                ...query,
+                "merchantPayment.time": { $gte: new Date(year, month, date), $lt: new Date(year, month, date + 1) }
+            }
+        }
+
         if (name != "") {
             let merchantId = await Merchant.find({ name: { $regex: new RegExp(name, "i") } }, "_id")
 
@@ -73,7 +93,7 @@ const searchPayment = async (req, res, next) => {
             }
         }
 
-        let payments = await Ticket.find(query, "_id")
+        let payments = await Ticket.find(query)
             .populate({
                 path: "bus",
                 select: "busNumber busName seatPrice"

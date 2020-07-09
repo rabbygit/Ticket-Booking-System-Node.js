@@ -22,9 +22,9 @@ const allTransports = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
+            transports,
             itemPerPage,
-            currentPage,
-            transports
+            currentPage
         })
     } catch (error) {
         next(error)
@@ -32,9 +32,12 @@ const allTransports = async (req, res, next) => {
 }
 
 const transportSearch = async (req, res, next) => {
+    const itemPerPage = parseInt(req.query.limit) || 50
+    const currentPage = parseInt(req.query.currentPage) || 1
+
     let contactNumber = req.query.number
     try {
-        let transport = await Bus.findOne({ contactNumber })
+        let transports = await Bus.find({ contactNumber })
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -51,7 +54,9 @@ const transportSearch = async (req, res, next) => {
         }
 
         res.status(200).json({
-            transport
+            transports,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
         next(error)
@@ -130,7 +135,7 @@ const transportDelete = async (req, res, next) => {
     try {
         await checkId(transport_id)
 
-        let transport = transport = await Bus.findById(transport_id);
+        let transport = await Bus.findById(transport_id);
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404

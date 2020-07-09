@@ -10,7 +10,7 @@ const busIndex = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
     try {
-        let buses = await Bus.find()
+        let transports = await Bus.find()
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -23,7 +23,7 @@ const busIndex = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            buses,
+            transports,
             itemPerPage,
             currentPage
         })
@@ -72,7 +72,7 @@ const filterBus = async (req, res, next) => {
             }
         }
 
-        let buses = await Bus.find(query)
+        let transports = await Bus.find(query)
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -85,10 +85,11 @@ const filterBus = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            buses
+            transports,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
-        console.log(error.message)
         next(error)
     }
 }
@@ -100,7 +101,7 @@ const showBus = async (req, res, next) => {
 
     try {
         await checkId(bus_id)
-        let bus = await Bus.findById(bus_id)
+        let transport = await Bus.findById(bus_id)
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -109,13 +110,13 @@ const showBus = async (req, res, next) => {
                     select: "from to"
                 }
             })
-        if (!bus) {
+        if (!transport) {
             let error = new Error("Bus Not Found")
             error.status = 404
             throw error
         }
         res.status(200).json({
-            bus
+            transport
         })
     } catch (error) {
         next(error)
@@ -128,14 +129,14 @@ const updateBus = async (req, res, next) => {
     const updateData = req.body.data
     try {
         await checkId(bus_id)
-        let bus = await Bus.findById(bus_id)
-        if (!bus) {
+        let transport = await Bus.findById(bus_id)
+        if (!transport) {
             let error = new Error("Bus Not Found")
             error.status = 404
             throw error
         }
 
-        bus = await Bus.findOneAndUpdate(
+        updatedTransport = await Bus.findOneAndUpdate(
             { _id: bus_id },
             { $set: updateData },
             { new: true }
@@ -143,7 +144,7 @@ const updateBus = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            bus
+            updatedTransport
         })
     } catch (error) {
         next(error)
@@ -157,8 +158,8 @@ const deleteBus = async (req, res, next) => {
 
     try {
         await checkId(bus_id)
-        let bus = await Bus.findById(bus_id)
-        if (!bus) {
+        let transport = await Bus.findById(bus_id)
+        if (!transport) {
             let error = new Error("Bus Not Found")
             error.status = 404
             throw error
@@ -168,7 +169,7 @@ const deleteBus = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            bus
+            transport
         })
     } catch (error) {
         next(error)
