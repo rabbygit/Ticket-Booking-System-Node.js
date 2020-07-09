@@ -10,7 +10,7 @@ const merchantSchema = new Schema({
         type: String,
         required: [true, "Name is required"],
         trim: true,
-        maxlength: 50
+        maxlength: 50,
     },
     companyName: {
         type: String,

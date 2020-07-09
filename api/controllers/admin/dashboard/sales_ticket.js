@@ -42,7 +42,7 @@ const salesTicketIndex = async (req, res, next) => {
 const filterbyDateSalesTicket = async (req, res, next) => {
     const itemPerPage = parseInt(req.query.limit) || 50
     const currentPage = parseInt(req.query.currentPage) || 1
-    const transport_id = req.query.id || ""
+    const transport_number = req.query.number || ""
     let specificTrips = [];
     let query = {
         "customerPayment.status": "paid"
@@ -77,8 +77,8 @@ const filterbyDateSalesTicket = async (req, res, next) => {
         }
 
         // Query by Bus number
-        if (transport_id != "") {
-            let bus = await Bus.findOne({ busNumber: transport_id }, "_id").exec()
+        if (transport_number != "") {
+            let bus = await Bus.findOne({ busNumber: transport_number }, "_id").exec()
             query = {
                 ...query,
                 bus: bus._id
@@ -93,12 +93,9 @@ const filterbyDateSalesTicket = async (req, res, next) => {
             })
             .populate({
                 path: "trip",
-                select: "departureTime arrivalTime",
-                populate: {
-                    path: "route",
-                    select: "from to"
-                }
+                select: "departureTime arrivalTime"
             })
+            .populate("route", "from to")
             .populate("seat", "row col")
             .skip((itemPerPage * currentPage) - itemPerPage)
             .limit(itemPerPage)
@@ -120,20 +117,17 @@ const salesTicketShow = async (req, res, next) => {
     try {
         await checkId(ticket_id)
 
-        const ticket = await Ticket.findById(ticket_id)
+        const ticket = await Ticket.findOne({ _id: ticket_id, "customerPayment.status": "paid" })
             .populate("customer", "name phoneNumber")
             .populate({
                 path: "bus",
                 select: "busNumber busName busType seatPrice",
-                populate: {
-                    path: "departureTrip",
-                    select: "departureTime arrivalTime",
-                    populate: {
-                        path: "route",
-                        select: "from to"
-                    }
-                }
             })
+            .populate({
+                path: "trip",
+                select: "departureTime arrivalTime"
+            })
+            .populate("route", "from to")
             .populate("seat", "row col")
             .exec()
 

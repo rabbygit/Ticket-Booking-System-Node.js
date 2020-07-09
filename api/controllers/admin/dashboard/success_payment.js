@@ -9,7 +9,7 @@ const successPaymentsIndex = async (req, res, next) => {
     const currentPage = parseInt(req.query.currentPage) || 1
 
     try {
-        const successfulPayments = await Ticket.find({
+        const payments = await Ticket.find({
             "merchantPayment.status": "paid"
         })
             .populate({
@@ -24,7 +24,9 @@ const successPaymentsIndex = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            successfulPayments
+            payments,
+            itemPerPage,
+            currentPage
         })
     } catch (error) {
         next(error)
@@ -66,7 +68,7 @@ const successPaymentFilter = async (req, res, next) => {
 
         // Check merchant
         if (merchantName != "") {
-            merchants = await Merchant.find({ name: merchantName }, "_id").exec()
+            merchants = await Merchant.find({ name: { $regex: new RegExp(merchantName, "i") } }, "_id").exec()
             query = {
                 ...query,
                 merchant: { $in: merchants.map(m => m._id) }
@@ -86,7 +88,6 @@ const successPaymentFilter = async (req, res, next) => {
             .limit(itemPerPage)
 
         res.status(200).json({
-            success_payments_data: itemPerPage + " " + currentPage + " " + "Success payments data",
             successfulPayments
         })
 
