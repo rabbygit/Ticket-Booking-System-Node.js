@@ -51,12 +51,12 @@ const login = async (req, res, next) => {
 
     try {
         let message
-        let admin = await Admin.findOne({ email: email })
+        let admin = await Admin.findOne({ email: email }).exec()
         if (admin) {
             const result = await bcrypt.compare(password, admin.password)
             if (result) {
                 const token = await jwt.sign({ id: admin._id, name: admin.name, email: admin.email, role: admin.role }, 'SECRET', { expiresIn: '1d' })
-                const updateToken = await Admin.findByIdAndUpdate({ _id: admin._id }, { $set: { 'access_token': token } }).exec()
+                const updateToken = await Admin.findOneAndUpdate({ _id: admin._id }, { $set: { 'access_token': token } }, { new: true }).exec()
                 if (updateToken) {
                     res.status(200).json({
                         message: true,
