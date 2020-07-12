@@ -1,11 +1,9 @@
 const Route = require('../../../../../models/Route')
-const Bus = require('../../../../../models/Bus')
+const Transport = require('../../../../../models/Transport')
 const Trip = require('../../../../../models/Trip')
 
 // Available Seat List
 const availableSeats = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let searchDate = new Date()
     let year = searchDate.getFullYear()
@@ -20,12 +18,11 @@ const availableSeats = async (req, res, next) => {
             "_id"
         ).exec()
 
-        let available_seats = await Bus.find({
+        let available_seats = await Transport.find({
             departureTrip: { $in: todayTrips.map(trip => trip._id) },
             availableSeats: { $gt: 0 }
         },
-            "busNumber contactNumber busType availableSeats seatPrice"
-        )
+            "number contactNumber availableSeats seatPrice type")
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -34,8 +31,6 @@ const availableSeats = async (req, res, next) => {
                     select: "from to"
                 }
             })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
             available_seats
@@ -48,16 +43,13 @@ const availableSeats = async (req, res, next) => {
 
 // Filter Available Seat by location or Bus id
 const filterAvailableSeat = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
-
-
+    // "2020-06-26"
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
     let date = searchDate.getDate() + 1
 
-    let busId = req.query.id || ""
+    let transportId = req.query.id || ""
     let from = (req.query.from) || ""
     let to = (req.query.to) || ""
 
@@ -88,16 +80,16 @@ const filterAvailableSeat = async (req, res, next) => {
         }
 
         // Query by bus id
-        if (busId != "") {
+        if (transportId != "") {
             query = {
                 ...query,
-                busNumber: busId
+                number: transportId
             }
         }
 
-        let available_seats = await Bus.find(
+        let available_seats = await Transport.find(
             query,
-            "busNumber contactNumber busType availableSeats seatPrice"
+            "number contactNumber type availableSeats seatPrice"
         )
             .populate({
                 path: "departureTrip",
@@ -107,8 +99,6 @@ const filterAvailableSeat = async (req, res, next) => {
                     select: "from to"
                 }
             })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
             available_seats

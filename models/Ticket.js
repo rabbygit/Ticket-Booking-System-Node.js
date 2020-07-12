@@ -20,9 +20,9 @@ const ticketSchema = new Schema({
         ref: "Trip",
         required: true
     },
-    bus: {
+    transport: {
         type: Schema.Types.ObjectId,
-        ref: "Bus",
+        ref: "Transport",
         required: true
     },
     route: {
@@ -34,6 +34,9 @@ const ticketSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Seat",
         required: true
+    },
+    transportType: {
+        type: String
     },
     customerPayment: {
         status: {

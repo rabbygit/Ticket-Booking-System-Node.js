@@ -21,29 +21,23 @@ const paymentCount = async (req, res, next) => {
 
 // Payment List
 const paymentList = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let { status } = req.params
 
     try {
         status = status.toLowerCase()
         let payments = await Ticket.find({ "merchantPayment.status": status })
-            .populate({
-                path: "bus",
-                select: "busNumber busName seatPrice"
-            })
-            .populate("merchant", "name")
-            .populate("seat", "row col")
-            .populate("trip", "departureTime")
-            .populate("route", "from to")
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
+            // .populate({
+            //     path: "transport",
+            //     select: "number name seatPrice"
+            // })
+            .populate("merchant", "name companyName phoneNumber address")
+        // .populate("seat", "row col")
+        // .populate("trip", "departureTime")
+        // .populate("route", "from to")
 
         res.status(200).json({
-            payments,
-            itemPerPage,
-            currentPage
+            payments
         })
     } catch (error) {
         next(error)
@@ -52,8 +46,6 @@ const paymentList = async (req, res, next) => {
 
 // Filter Payment
 const searchPayment = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let { status } = req.params
     let { name = '' } = req.query
@@ -95,15 +87,13 @@ const searchPayment = async (req, res, next) => {
 
         let payments = await Ticket.find(query)
             .populate({
-                path: "bus",
-                select: "busNumber busName seatPrice"
+                path: "transport",
+                select: "number name seatPrice"
             })
             .populate("merchant", "name")
             .populate("seat", "row col")
             .populate("trip", "departureTime")
             .populate("route", "from to")
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
             payments
@@ -113,7 +103,6 @@ const searchPayment = async (req, res, next) => {
     }
 }
 
-3
 // View Payment
 const viewPayment = async (req, res, next) => {
     let { status, id } = req.params
@@ -125,8 +114,8 @@ const viewPayment = async (req, res, next) => {
             { _id: id, "merchantPayment.status": status }
         )
             .populate({
-                path: "bus",
-                select: "busNumber busName seatPrice"
+                path: "transport",
+                select: "number name seatPrice"
             })
             .populate("merchant", "name")
             .populate("seat", "row col")

@@ -1,4 +1,4 @@
-const Bus = require("../../../../models/Bus")
+const Transport = require("../../../../models/Transport")
 const Customer = require("../../../../models/Customer")
 const Ticket = require("../../../../models/Ticket")
 
@@ -6,7 +6,7 @@ const dashboardIndex = async (req, res, next) => {
     const dashboard_data = {}
 
     try {
-        dashboard_data.total_transport = await Bus.estimatedDocumentCount()
+        dashboard_data.total_transport = await Transport.estimatedDocumentCount()
         dashboard_data.total_customer = await Customer.estimatedDocumentCount()
         dashboard_data.total_ticket_sale = await Ticket.countDocuments({ "customerPayment.status": "paid" })
         dashboard_data.total_ticket_cancle = await Ticket.countDocuments({ "customerPayment.status": "canceled" })

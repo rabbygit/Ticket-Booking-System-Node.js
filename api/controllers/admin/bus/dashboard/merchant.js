@@ -2,13 +2,9 @@ const Merchant = require("../../../../../models/Merchant")
 const checkId = require("../../../../../validators/mongooseId")
 // Merchant Index
 const merchantIndex = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     try {
         let merchants = await Merchant.find({ merchantType: "bus" })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json(merchants)
     } catch (error) {
@@ -19,13 +15,9 @@ const merchantIndex = async (req, res, next) => {
 
 // Filter Merchant company name or phone number
 const filterMerchant = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
     const data = req.query.search
     try {
         let merchant = await Merchant.find({ $text: { $search: data } })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json(merchant)
     } catch (error) {

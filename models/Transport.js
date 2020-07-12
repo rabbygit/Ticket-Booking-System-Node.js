@@ -1,6 +1,12 @@
 const { Schema, model } = require("mongoose")
 
-const busSchema = new Schema({
+const transportSchema = new Schema({
+    transportType: {
+        type: String,
+        enum: ["bus", "lunch"],
+        default: "bus",
+        required: true
+    },
     merchant: {
         type: Schema.Types.ObjectId,
         ref: "Merchant",
@@ -16,16 +22,16 @@ const busSchema = new Schema({
         ref: "Trip",
         required: true
     },
-    busNumber: {
+    number: {
         type: String,
         unique: true,
         required: true
     },
-    busName: {
+    name: {
         type: String,
         maxlength: 100
     },
-    busLogo: String,
+    logo: String,
     officeAddress: {
         type: String,
         required: true
@@ -34,7 +40,7 @@ const busSchema = new Schema({
         type: [String],
         required: true
     },
-    busType: {
+    type: {
         type: String,
         enum: ["AC", "N/AC"]
     },
@@ -54,6 +60,6 @@ const busSchema = new Schema({
     timestamps: true
 })
 
-const Bus = model('Bus', busSchema)
+const Transport = model('Transport', transportSchema)
 
-module.exports = Bus;
+module.exports = Transport;

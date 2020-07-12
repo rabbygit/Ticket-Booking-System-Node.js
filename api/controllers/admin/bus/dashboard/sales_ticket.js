@@ -1,14 +1,12 @@
 const Ticket = require("../../../../../models/Ticket")
 const Trip = require("../../../../../models/Trip")
 const Route = require("../../../../../models/Route")
-const Bus = require("../../../../../models/Bus")
+const Transport = require("../../../../../models/Transport")
 
 const checkId = require("../../../../../validators/mongooseId")
 
 // Ticket Sale List
 const salesTicketIndex = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     try {
         const sales_ticket = await Ticket.find({
@@ -16,8 +14,8 @@ const salesTicketIndex = async (req, res, next) => {
         })
             .populate("customer", "name phoneNumber")
             .populate({
-                path: "bus",
-                select: "busNumber busName busType seatPrice",
+                path: "transport",
+                select: "number name type seatPrice",
             })
             .populate({
                 path: "trip",
@@ -25,13 +23,9 @@ const salesTicketIndex = async (req, res, next) => {
             })
             .populate("route", "from to")
             .populate("seat", "row col")
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
-            sales_ticket,
-            itemPerPage,
-            currentPage
+            sales_ticket
         })
     } catch (error) {
         next(error)
@@ -41,8 +35,6 @@ const salesTicketIndex = async (req, res, next) => {
 
 // Filter Sales Ticket by date , route , bus number
 const salesTicketFilter = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let from = (req.query.from) || ""
     let to = (req.query.to) || ""
@@ -82,10 +74,10 @@ const salesTicketFilter = async (req, res, next) => {
 
         // Query by Bus number
         if (transport_number != "") {
-            let bus = await Bus.findOne({ busNumber: transport_number }, "_id").exec()
+            let transport = await Transport.findOne({ number: transport_number }, "_id").exec()
             query = {
                 ...query,
-                bus: bus._id
+                transport: transport._id
             }
         }
 
@@ -104,8 +96,8 @@ const salesTicketFilter = async (req, res, next) => {
         let sales_ticket = await Ticket.find(query)
             .populate("customer", "name phoneNumber")
             .populate({
-                path: "bus",
-                select: "busNumber busName busType seatPrice",
+                path: "transport",
+                select: "number name type seatPrice",
             })
             .populate({
                 path: "trip",
@@ -113,13 +105,9 @@ const salesTicketFilter = async (req, res, next) => {
             })
             .populate("route", "from to")
             .populate("seat", "row col")
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
-            sales_ticket,
-            itemPerPage,
-            currentPage
+            sales_ticket
         })
     } catch (error) {
         next(error)
@@ -135,8 +123,8 @@ const salesTicketShow = async (req, res, next) => {
         let ticket = await Ticket.findOne({ _id: ticket_id, "customerPayment.status": "paid" })
             .populate("customer", "name phoneNumber")
             .populate({
-                path: "bus",
-                select: "busNumber busName busType seatPrice",
+                path: "transport",
+                select: "number name type seatPrice",
             })
             .populate({
                 path: "trip",

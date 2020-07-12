@@ -1,9 +1,9 @@
 const { Schema, model } = require("mongoose")
 
 const tripSchema = new Schema({
-    bus: {
+    transport: {
         type: Schema.Types.ObjectId,
-        ref: "Bus",
+        ref: "Transport",
         required: true
     },
     route: {

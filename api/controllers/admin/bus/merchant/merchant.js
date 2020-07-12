@@ -80,8 +80,6 @@ const addMerchant = async (req, res, next) => {
 
 // Merchant List
 const merchantList = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
     const { status } = req.params
     let query = {
         merchantType: "bus"
@@ -107,8 +105,6 @@ const merchantList = async (req, res, next) => {
 
 // Merchant Filter and search
 const filterMerchant = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
     const data = req.query.search || ""
     const { status } = req.params
     let query = {
@@ -123,8 +119,6 @@ const filterMerchant = async (req, res, next) => {
             }
         }
         let merchants = await Merchant.find(query)
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json(merchants)
     } catch (error) {

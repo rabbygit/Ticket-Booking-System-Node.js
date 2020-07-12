@@ -1,13 +1,11 @@
 const Route = require('../../../../../models/Route')
-const Bus = require('../../../../../models/Bus')
+const Transport = require('../../../../../models/Transport')
 const Trip = require('../../../../../models/Trip')
 
 const checkId = require("../../../../../validators/mongooseId")
 
 // Bus List
 const busList = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let searchDate = new Date()
     let year = searchDate.getFullYear()
@@ -22,9 +20,9 @@ const busList = async (req, res, next) => {
             "_id"
         ).exec()
 
-        let today_buses = await Bus.find(
+        let today_buses = await Transport.find(
             { departureTrip: { $in: todayTrips.map(trip => trip._id) } },
-            "busNumber contactNumber busType availableSeats seatPrice"
+            "number number type availableSeats seatPrice"
         )
             .populate({
                 path: "departureTrip",
@@ -34,8 +32,7 @@ const busList = async (req, res, next) => {
                     select: "from to"
                 }
             })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
+
 
         res.status(200).json({
             today_buses
@@ -48,15 +45,13 @@ const busList = async (req, res, next) => {
 
 // Filter bus
 const filterBus = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
     let date = searchDate.getDate() + 1
 
-    let busId = req.query.id || ""
+    let transportId = req.query.id || ""
     let contactNumber = req.query.number || ""
     let from = (req.query.from) || ""
     let to = (req.query.to) || ""
@@ -79,7 +74,7 @@ const filterBus = async (req, res, next) => {
             from = from.toLowerCase()
             to = to.toLowerCase()
             let routes = await Route.find({ from, to }, "_id")
-            let buses = await Trip.find({ route: { $in: routes.map(m => m._id) } }, "bus")
+            let buses = await Trip.find({ route: { $in: routes.map(m => m._id) } }, "transport")
 
             query = {
                 ...query,
@@ -88,10 +83,10 @@ const filterBus = async (req, res, next) => {
         }
 
         // Query by bus id
-        if (busId != "") {
+        if (transportId != "") {
             query = {
                 ...query,
-                busNumber: busId
+                number: transportId
             }
         }
 
@@ -103,9 +98,9 @@ const filterBus = async (req, res, next) => {
             }
         }
 
-        let today_buses = await Bus.find(
+        let today_buses = await Transport.find(
             query,
-            "busNumber contactNumber busType availableSeats seatPrice"
+            "number number type availableSeats seatPrice"
         )
             .populate({
                 path: "departureTrip",
@@ -115,8 +110,6 @@ const filterBus = async (req, res, next) => {
                     select: "from to"
                 }
             })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
             today_buses
@@ -146,12 +139,12 @@ const showBus = async (req, res, next) => {
             "_id"
         ).exec()
 
-        let bus = await Bus.findOne(
+        let bus = await Transport.findOne(
             {
                 departureTrip: { $in: todayTrips.map(trip => trip._id) },
                 _id: bus_id
             },
-            "busNumber contactNumber busType availableSeats seatPrice"
+            "number number type availableSeats seatPrice"
         )
             .populate({
                 path: "departureTrip",

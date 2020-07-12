@@ -11,9 +11,9 @@ const paymentSchema = new Schema({
         ref: "Trip",
         required: true
     },
-    bus: {
+    transport: {
         type: Schema.Types.ObjectId,
-        ref: "Bus",
+        ref: "Transport",
         required: true
     },
     seats: [

@@ -1,14 +1,11 @@
-const Bus = require("../../../../models/Bus")
+const Transport = require("../../../../models/Transport")
 const checkId = require("../../../../validators/mongooseId")
 
 // All Transports 
 const allTransports = async (req, res, next) => {
 
-    let itemPerPage = parseInt(req.query.limit) || 50
-    let currentPage = parseInt(req.query.currentPage) || 1
-
     try {
-        let transports = await Bus.find()
+        let transports = await Transport.find()
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -17,13 +14,9 @@ const allTransports = async (req, res, next) => {
                     select: "from to"
                 }
             })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
-            transports,
-            itemPerPage,
-            currentPage
+            transports
         })
     } catch (error) {
         next(error)
@@ -31,12 +24,10 @@ const allTransports = async (req, res, next) => {
 }
 
 const transportSearch = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     let contactNumber = req.query.number
     try {
-        let transports = await Bus.find({ contactNumber })
+        let transport = await Transport.find({ contactNumber })
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -53,9 +44,7 @@ const transportSearch = async (req, res, next) => {
         }
 
         res.status(200).json({
-            transports,
-            itemPerPage,
-            currentPage
+            transport
         })
     } catch (error) {
         next(error)
@@ -70,7 +59,7 @@ const transportShow = async (req, res, next) => {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = await Bus.findById(transport_id)
+        let transport = await Transport.findById(transport_id)
             .populate({
                 path: "departureTrip",
                 select: "_id",
@@ -104,14 +93,14 @@ const transportUpdate = async (req, res, next) => {
         // Check valid mongodb id
         await checkId(transport_id)
 
-        let transport = await Bus.findById(transport_id);
+        let transport = await Transport.findById(transport_id).exec();
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
             throw e
         }
 
-        let updatedTransport = await Bus.findOneAndUpdate(
+        let updatedTransport = await Transport.findOneAndUpdate(
             { _id: transport_id },
             { $set: updatedData },
             { new: true }
@@ -134,14 +123,14 @@ const transportDelete = async (req, res, next) => {
     try {
         await checkId(transport_id)
 
-        let transport = await Bus.findById(transport_id);
+        let transport = await Transport.findById(transport_id);
         if (!transport) {
             let e = new Error("Transport not found")
             e.status = 404
             throw e
         }
 
-        await Bus.findByIdAndDelete(transport_id);
+        await Transport.findByIdAndDelete(transport_id);
 
         res.status(200).json({
             success: true,

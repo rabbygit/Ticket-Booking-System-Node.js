@@ -3,18 +3,12 @@ const checkId = require("../../../../../validators/mongooseId")
 
 // Customer Index
 const customerIndex = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     try {
         const customers = await Customer.find({ customerType: "bus" })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
-            customers,
-            itemPerPage,
-            currentPage
+            customers
         })
     } catch (error) {
         next(error)
@@ -23,19 +17,13 @@ const customerIndex = async (req, res, next) => {
 
 // Filter customer by gender
 const filterCustomer = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
-    const gender = req.query.gender || "male"
+    const gender = req.params.gender
 
     try {
         let customers = await Customer.find({ customerType: "bus", gender })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
         res.status(200).json({
-            customers,
-            itemPerPage,
-            currentPage
+            customers
         })
     } catch (error) {
         next(error)

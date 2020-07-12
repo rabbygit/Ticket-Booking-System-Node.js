@@ -43,7 +43,7 @@ router.get('/dashboard/transport/all/:id/delete', transportController.transportD
 
 // Customer
 router.get('/dashboard/customers/all', customerController.customerIndex)
-router.get('/dashboard/customers/all/filter/', customerController.customerSelectByLimitGender)
+router.get('/dashboard/customers/all/filter/:gender', customerController.customerFilterByGender)
 router.get('/dashboard/customers/all/search/:number', customerController.customerFilter)
 router.get('/dashboard/customers/all/:id/show', customerController.customerShow)
 router.get('/dashboard/customers/all/:id/delete', customerController.customerDelete)
@@ -85,7 +85,7 @@ router.get('/bus/dashboard/index', busDashboardController.dashboardIndex)
 
 // Bus Dashboard Customer
 router.get('/bus/dashboard/customers/', busDashboardCustomerController.customerIndex)
-router.get('/bus/dashboard/customers/filter/', busDashboardCustomerController.filterCustomer)
+router.get('/bus/dashboard/customers/filter/:gender', busDashboardCustomerController.filterCustomer)
 router.get('/bus/dashboard/customers/search/:number', busDashboardCustomerController.customerFilterByNumber)
 router.get('/bus/dashboard/customers/:id/show', busDashboardCustomerController.customerShow)
 router.get('/bus/dashboard/customer/:id/delete', busDashboardCustomerController.customerDelete)

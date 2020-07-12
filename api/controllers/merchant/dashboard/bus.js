@@ -1,4 +1,4 @@
-const Bus = require("../../../../models/Bus")
+const Transport = require("../../../../models/Transport")
 const checkId = require("../../../../validators/mongooseId")
 
 // Add Bus
@@ -8,17 +8,16 @@ const addBus = async (req, res, next) => {
     let message
 
     try {
-        const newData = new Bus({
+        const newData = new Transport({
             merchant: merchant_id,
 
-            busNumber: req.body.busNumber,
-            busName: req.body.busName,
-            busLogo: req.body.busLogo,
+            number: req.body.number,
+            name: req.body.name,
+            logo: req.body.logo,
             officeAddress: req.body.officeAddress,
             contactNumber: req.body.contactNumber,
-            busType: req.body.busType,
+            type: req.body.type,
             seatPrice: req.body.seatPrice,
-            busName: req.body.busName,
         })
 
         const newBus = await newData.save()
@@ -39,14 +38,10 @@ const addBus = async (req, res, next) => {
 // Bus list
 const busList = async (req, res, next) => {
     const merchant_id = req.params.merchant_id
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
 
     try {
         await checkId(merchant_id)
-        const busses = await Bus.find({ merchant: merchant_id })
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
+        const busses = await Transport.find({ merchant: merchant_id })
 
         res.status(200).json({
             busses
@@ -60,8 +55,6 @@ const busList = async (req, res, next) => {
 
 // Filter by date
 const filterByDate = async (req, res, next) => {
-    const itemPerPage = parseInt(req.query.limit) || 50
-    const currentPage = parseInt(req.query.currentPage) || 1
     let year, month, date;
     const merchant_id = req.params.merchant_id
 
@@ -82,7 +75,7 @@ const filterByDate = async (req, res, next) => {
 
         await checkId(merchant_id)
 
-        const busses = await Bus.find({})
+        const busses = await Transport.find({})
 
 
     } catch (error) {
@@ -99,8 +92,6 @@ const filterByDate = async (req, res, next) => {
 
 // Filter bus
 const filterBus = async (req, res, next) => {
-    const limit = req.query.limit
-    const currentPage = req.query.currentPage
     const bus_id = req.query.bus_id
     const location = req.query.location
     const seat_price = req.query.seat_price
@@ -109,15 +100,15 @@ const filterBus = async (req, res, next) => {
     let busses
 
     try {
-        if(bus_id){
-            const bus = await Bus.findOne({ busNumber: bus_id })
+        if (bus_id) {
+            const bus = await Transport.findOne({ busNumber: bus_id })
             res.status(200).json({
                 bus
             })
         }
 
-        if(location){
-            const bus = await Bus.findOne({ busNumber: location })
+        if (location) {
+            const bus = await Transport.findOne({ busNumber: location })
             res.status(200).json({
                 bus
             })
@@ -142,7 +133,7 @@ const showBus = async (req, res, next) => {
     try {
         await checkId(bus_id)
         await checkId(merchant_id)
-        const bus_info = await Bus.find({ $and: [{ _id: bus_id }, { merchant: merchant_id }] })
+        const bus_info = await Transport.find({ $and: [{ _id: bus_id }, { merchant: merchant_id }] })
         res.status(200).json({
             bus_info
         })
@@ -171,7 +162,7 @@ const updateBus = async (req, res, next) => {
             throw e
         }
 
-        let updatedBus = await Bus.findOneAndUpdate(
+        let updatedBus = await Transport.findOneAndUpdate(
             { $and: [{ _id: bus_id }, { merchant: merchant_id }] },
             { _id: transport_id },
             { $set: data },
@@ -201,14 +192,14 @@ const deleteBus = async (req, res, next) => {
         await checkId(bus_id)
         await checkId(merchant_id)
 
-        let bus = await Bus.find({ $and: [{ _id: bus_id }, { merchant: merchant_id }] })
+        let bus = await Transport.find({ $and: [{ _id: bus_id }, { merchant: merchant_id }] })
         if (!bus) {
             let e = new Error("Bus not found")
             e.status = 404
             throw e
         }
 
-        let deletedBus = await Bus.findByIdAndDelete(transport_id);
+        let deletedBus = await Transport.findByIdAndDelete(transport_id);
 
         res.status(200).json({
             message: true,

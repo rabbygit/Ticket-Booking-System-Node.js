@@ -1,11 +1,11 @@
-const Bus = require("../../../../models/Bus")
+const Transport = require("../../../../models/Transport")
 const Payment = require("../../../../models/Payment")
 const Merchant = require("../../../../models/Merchant")
 
 const merchants = async (req, res, next) => {
     try {
         const merchantAll = await Merchant.find()
-        const busAll = await Bus.find()
+        const busAll = await Transport.find()
         const paymentAll = await Payment.find()
         res.status(200).json({
             merchantAll,
@@ -32,7 +32,7 @@ const countTotal = async (req, res, next) => {
     }
 
     try {
-        dashboard_data.total_bus = await Bus.countDocuments({ merchant: merchant_id })
+        dashboard_data.total_bus = await Transport.countDocuments({ merchant: merchant_id })
         dashboard_data.success_payments = await Payment.countDocuments({ merchant: merchant_id })
             .populate({
                 path: "Bus"
