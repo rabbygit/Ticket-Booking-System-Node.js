@@ -8,7 +8,7 @@ const availableSeats = async (req, res, next) => {
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
-    let date = searchDate.getDate() + 1
+    let date = searchDate.getDate()
 
     try {
         let todayTrips = await Trip.find(
@@ -47,7 +47,7 @@ const filterAvailableSeat = async (req, res, next) => {
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
-    let date = searchDate.getDate() + 1
+    let date = searchDate.getDate()
 
     let transportId = req.query.id || ""
     let from = (req.query.from) || ""

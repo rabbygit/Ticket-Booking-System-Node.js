@@ -18,7 +18,6 @@ const paymentCount = async (req, res, next) => {
     }
 }
 
-
 // Payment List
 const paymentList = async (req, res, next) => {
 
@@ -27,14 +26,11 @@ const paymentList = async (req, res, next) => {
     try {
         status = status.toLowerCase()
         let payments = await Ticket.find({ "merchantPayment.status": status })
-            // .populate({
-            //     path: "transport",
-            //     select: "number name seatPrice"
-            // })
+            .populate("transport", "number name seatPrice")
             .populate("merchant", "name companyName phoneNumber address")
-        // .populate("seat", "row col")
-        // .populate("trip", "departureTime")
-        // .populate("route", "from to")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
 
         res.status(200).json({
             payments
@@ -45,7 +41,7 @@ const paymentList = async (req, res, next) => {
 }
 
 // Filter Payment
-const searchPayment = async (req, res, next) => {
+const filterPayment = async (req, res, next) => {
 
     let { status } = req.params
     let { name = '' } = req.query
@@ -136,16 +132,52 @@ const viewPayment = async (req, res, next) => {
     }
 }
 
+// View Payment
+const invoicePayment = async (req, res, next) => {
+    let { status, id } = req.params
+
+    try {
+        await checkId(id)
+
+        let payment = await Ticket.findOne(
+            { _id: id, "merchantPayment.status": status }
+        )
+            .populate({
+                path: "transport",
+                select: "number name seatPrice"
+            })
+            .populate("merchant", "name")
+            .populate("seat", "row col")
+            .populate("trip", "departureTime")
+            .populate("route", "from to")
+
+        if (!payment) {
+            let error = new Error("Payment Not Found")
+            error.status = 404
+            throw error
+        }
+
+        res.status(200).json({
+            payment
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 // Change Payment transaction status "request" to "processing"
-const paymentTransactionStatus = async (req, res, next) => {
+const acceptPayment = async (req, res, next) => {
     let { id } = req.params
 
     try {
         await checkId(id)
 
         let payment = await Ticket.findOne(
-            { _id: id, "merchantPayment.status": "request" }
+            {
+                _id: id,
+                "merchantPayment.status": "request",
+                "customerPayment.status": "paid"
+            }
         ).exec()
 
         if (!payment) {
@@ -155,7 +187,7 @@ const paymentTransactionStatus = async (req, res, next) => {
         }
 
         let acceptedPayment = await Ticket.findOneAndUpdate(
-            { _id: id, "merchantPayment.status": "request" },
+            { _id: payment._id, "merchantPayment.status": "request" },
             { $set: { "merchantPayment.status": "processing" } },
             { new: true }
         ).exec()
@@ -169,23 +201,41 @@ const paymentTransactionStatus = async (req, res, next) => {
     }
 }
 
-
 // Delete payment
-const deletePayment = (req, res) => {
-    const payment_id = req.params.id
-    let message
+const deletePayment = async (req, res, next) => {
+    let { id } = req.params
 
-    res.status(200).json({
-        message: true
-    })
+    try {
+        await checkId(id)
+
+        let payment = await Ticket.findOne(
+            { _id: id, "customerPayment.status": "canceled" },
+            "_id"
+        )
+
+        if (!payment) {
+            let error = new Error("Payment Not Found")
+            error.status = 404
+            throw error
+        }
+
+        await Ticket.findOneAndDelete({ _id: payment._id })
+
+        res.status(200).json({
+            success: true,
+            deletePayment: payment
+        })
+    } catch (error) {
+        next(error)
+    }
 }
-
 
 module.exports = {
     paymentCount,
     paymentList,
-    searchPayment,
+    filterPayment,
     viewPayment,
-    paymentTransactionStatus,
+    invoicePayment,
+    acceptPayment,
     deletePayment
 }

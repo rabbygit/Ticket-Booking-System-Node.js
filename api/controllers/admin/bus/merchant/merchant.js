@@ -1,7 +1,12 @@
 const bcrypt = require("bcryptjs")
 
 const Merchant = require("../../../../../models/Merchant")
+const Transport = require("../../../../../models/Transport")
+const Trip = require("../../../../../models/Trip")
+const Ticket = require("../../../../../models/Ticket")
+
 const checkId = require("../../../../../validators/mongooseId")
+const merchant = require("../dashboard/merchant")
 // Merchant Index
 const merchantIndex = async (req, res, next) => {
     let data = {}
@@ -11,7 +16,9 @@ const merchantIndex = async (req, res, next) => {
         data.all_agent = "Wait for next update"
         data.agent_request = "Wait for next update"
 
-        res.status(200).json(data)
+        res.status(200).json({
+            data
+        })
     } catch (error) {
         next(error)
     }
@@ -20,16 +27,18 @@ const merchantIndex = async (req, res, next) => {
 
 // Add Merchant
 const addMerchant = async (req, res, next) => {
-    let { name, companyName, phoneNumber, email, password, address } = req.body.data
 
-    if (typeof email == "undefined" || typeof password == "undefined") {
-        return res.status(500).json({
-            success: false,
-            message: ["Email and Password required"]
-        })
-    }
 
     try {
+        let { name, companyName, phoneNumber, email, password, address } = req.body.data
+
+        if (typeof email == "undefined" || typeof password == "undefined") {
+            return res.status(500).json({
+                success: false,
+                message: ["Email and Password required"]
+            })
+        }
+
         let merchant = await Merchant.findOne({ $or: [{ email }, { phoneNumber }] })
 
         if (merchant) {
@@ -93,10 +102,10 @@ const merchantList = async (req, res, next) => {
         }
 
         let merchants = await Merchant.find(query)
-            .skip((itemPerPage * currentPage) - itemPerPage)
-            .limit(itemPerPage)
 
-        res.status(200).json(merchants)
+        res.status(200).json({
+            merchants
+        })
     } catch (error) {
         next(error)
     }
@@ -138,23 +147,79 @@ const viewProfile = async (req, res, next) => {
             error.status = 404
             throw error
         }
-        res.status(200).json(merchant)
+        res.status(200).json({
+            merchant
+        })
     } catch (error) {
         next(error)
     }
 }
 
 
-// Merchant Dashboard view
-const merchantDashboard = (req, res, next) => {
-    const merchant_id = req.params.id
-    let merchant_dashboard
+// Merchant Dashboard view 2020-07-12
+const merchantDashboard = async (req, res, next) => {
+    let { id } = req.params
 
-    res.status(200).json({
-        merchant_dashboard: `${merchant_id} dashboard`
-    })
+    let searchDate = new Date()
+    let year = searchDate.getFullYear()
+    let month = searchDate.getMonth();
+    let date = searchDate.getDate()
+
+    let data = {}
+
+    try {
+        // Today available Trip
+        let todayTrips = await Trip.find(
+            {
+                departureTime: { $gte: new Date(year, month, date), $lt: new Date(year, month, date + 1) }
+            },
+            "_id"
+        ).exec()
+
+        console.log(todayTrips)
+        // Total Bus of this merchant
+        data.total_bus = await Transport.countDocuments({ merchant: id })
+
+        // Today Bus of this merchant 
+        data.today_bus = await Transport.countDocuments({ merchant: id, departureTrip: { $in: todayTrips.map(trip => trip._id) } })
+
+        // Today Available seats of this merchant 
+        // let result = await Transport.aggregate([
+        //     {
+        //         $match: {
+        //             $and: [{ merchant: id }, { departureTrip: { $in: todayTrips.map(trip => trip._id) }, availableSeats: { $gt: 0 } }]
+        //         }
+        //     }
+        // ])
+
+        // console.log(result)
+
+        let available_seats = await Transport.find({
+            merchant: id,
+            departureTrip: { $in: todayTrips.map(trip => trip._id) },
+            availableSeats: { $gt: 0 }
+        }, "availableSeats").exec()
+
+        data.today_available_seats = available_seats.map(transport => transport.availableSeats).reduce((sum, value) => sum + value, 0)
+
+        // Success payment of the merchant
+        data.success_payments = await Ticket.countDocuments({ merchant: id, "merchantPayment.status": "paid" })
+
+        // Total sales tickets
+        data.sale_tickets = await Ticket.countDocuments({ merchant: id, "customerPayment.status": "paid" })
+
+        // Total cancel tickets
+        data.sale_tickets = await Ticket.countDocuments({ merchant: id, "customerPayment.status": "canceled" })
+
+
+        res.status(200).json({
+            data
+        })
+    } catch (error) {
+        console.log(error.message)
+        next(error)
+    }
 }
-
 
 // Merchant Status Update
 const merchantStatusUpdate = async (req, res, next) => {
@@ -192,7 +257,6 @@ const merchantStatusUpdate = async (req, res, next) => {
         next(error)
     }
 }
-
 
 // Delete Merchant
 const deleteMerchant = async (req, res, next) => {
