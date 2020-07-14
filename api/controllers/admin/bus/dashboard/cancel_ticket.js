@@ -56,7 +56,7 @@ const cancelTicketFilter = async (req, res, next) => {
             let searchDate = new Date(req.query.date)
             let year = searchDate.getFullYear()
             let month = searchDate.getMonth();
-            let date = searchDate.getDate() + 1
+            let date = searchDate.getDate()
 
             specificTrips = await Trip.find(
                 {

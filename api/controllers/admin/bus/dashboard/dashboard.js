@@ -23,7 +23,7 @@ const dashboardIndex = async (req, res, next) => {
     try {
         // Get Today Date
         let today = new Date()
-        let date = today.getDate() + 1
+        let date = today.getDate()
         let month = today.getMonth()
         let year = today.getFullYear()
         let todayBus = await Trip.find({ departureTime: { $gte: new Date(year, month, date), $lt: new Date(year, month, date + 1) } }, "bus").exec()

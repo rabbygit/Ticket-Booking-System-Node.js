@@ -10,7 +10,7 @@ const busList = async (req, res, next) => {
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
-    let date = searchDate.getDate() + 1
+    let date = searchDate.getDate()
 
     try {
         let todayTrips = await Trip.find(
@@ -49,7 +49,7 @@ const filterBus = async (req, res, next) => {
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
-    let date = searchDate.getDate() + 1
+    let date = searchDate.getDate()
 
     let transportId = req.query.id || ""
     let contactNumber = req.query.number || ""
@@ -127,7 +127,7 @@ const showBus = async (req, res, next) => {
     let searchDate = new Date()
     let year = searchDate.getFullYear()
     let month = searchDate.getMonth();
-    let date = searchDate.getDate() + 1
+    let date = searchDate.getDate()
 
     try {
         await checkId(bus_id)

@@ -51,7 +51,7 @@ const successPaymentFilter = async (req, res, next) => {
             let searchDate = new Date(req.query.date)
             year = searchDate.getFullYear()
             month = searchDate.getMonth()
-            date = searchDate.getDate() + 1
+            date = searchDate.getDate()
 
             query = {
                 ...query,
